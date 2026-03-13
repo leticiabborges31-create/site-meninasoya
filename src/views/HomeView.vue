@@ -72,6 +72,12 @@ v-for="atividade in atividades"
 <p>Coordenadora</p>
 </div>
 
+<div class="card-coordenador">
+<img src="https://via.placeholder.com/150" class="foto-coordenador">
+<h3>Profª Regina</h3>
+<p>Coordenadora</p>
+</div>
+
 </div>
 
 </section>
