@@ -6,9 +6,9 @@
 
 <nav class="menu">
 <ul>
-<li><a href="#inicio">Sobre</a></li>
-<li><a href="#noticias">Notícias</a></li>
-<li><a href="#coordenacao">Coordenação</a></li>
+<li><router-link to="/">Sobre</router-link></li>
+<li><router-link to="/#noticias">Notícias</router-link></li>
+<li><router-link to="/#coordenacao">Coordenação</router-link></li>
 <li><router-link to="/admin">Administração</router-link></li>
 </ul>
 </nav>

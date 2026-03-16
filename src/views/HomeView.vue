@@ -13,6 +13,7 @@ Engenharia e Ciências Exatas.
 </section>
 
 <section id="inicio" class="secao clara fade-in">
+
 <h2 class="titulo-secao">Sobre o Projeto</h2>
 
 <div class="bloco-flex">
@@ -23,15 +24,15 @@ class="imagem-redonda"
 />
 
 <div class="texto-lado">
-
 <p>
-Constituir uma Rede de Apoio, Acolhimento e Empoderamento (RAAE), com abordagem multidisciplinar, que forneça suporte ao acesso ao Ensino Superior, permanência e ascensão de meninas e mulheres nas áreas de Ciências Exatas, Engenharias e Computação, em especial, daquelas oriundas de comunidades periféricas e/ou em situação de vulnerabilidade, envolvendo as regiões Nordeste, Sudeste e Sul do país.
-
+Constituir uma Rede de Apoio, Acolhimento e Empoderamento (RAAE), com abordagem multidisciplinar, que forneça suporte ao acesso ao Ensino Superior, permanência e ascensão de meninas e mulheres nas áreas de Ciências Exatas, Engenharias e Computação.
 </p>
+</div>
 
 </div>
-</div>
+
 </section>
+
 
 <section id="noticias" class="secao clara noticias">
 
@@ -40,19 +41,21 @@ Constituir uma Rede de Apoio, Acolhimento e Empoderamento (RAAE), com abordagem 
 <div class="grid-noticias">
 
 <div
-class="card-noticia fade"
-v-for="atividade in atividades"
-:key="atividade.id"
+class="card-noticia"
+v-for="noticia in noticias"
+:key="noticia.titulo"
+@click="abrirNoticia(noticia)"
 >
-
-<h3>{{ atividade.titulo }}</h3>
-<p>{{ atividade.descricao }}</p>
+<h3>{{ noticia.titulo }}</h3>
+<p>{{ noticia.descricao }}</p>
+<p>{{ noticia.data }}</p>
 
 </div>
 
 </div>
 
 </section>
+
 
 <section id="coordenacao" class="secao clara coordenacao">
 
@@ -61,67 +64,144 @@ v-for="atividade in atividades"
 <div class="grid-coordenacao">
 
 <div class="card-coordenador">
-<img src="https://via.placeholder.com/150" class="foto-coordenador">
-<h3>Profª Carolina</h3>
+<img src="@/assets/carolina.png" class="foto-coordenador">
+<h3>Carolina Pereira Aranha</h3>
 <p>Coordenadora Geral</p>
 </div>
 
 <div class="card-coordenador">
-<img src="https://via.placeholder.com/150" class="foto-coordenador">
-<h3>Profª Regina</h3>
-<p>Coordenadora</p>
+<img src="@/assets/regina.png.gif" class="foto-coordenador">
+<h3>Regina Célia de Sousa</h3>
+<p>Coordenadora do Maranhão</p>
 </div>
 
 <div class="card-coordenador">
-<img src="https://via.placeholder.com/150" class="foto-coordenador">
-<h3>Profª Regina</h3>
-<p>Coordenadora</p>
+<img src="@/assets/isabelle.png" class="foto-coordenador">
+<h3>Isabelle Priscila Carneiro de Lima</h3>
+<p>Coordenadora da Bahia</p>
+</div>
+
+<div class="card-coordenador">
+<img src="@/assets/ines.png" class="foto-coordenador">
+<h3>Inés Prieto Schmidt Sauerwein</h3>
+<p>Coordenadora do Sul</p>
+</div>
+
+<div class="card-coordenador">
+<img src="@/assets/graciella.png" class="foto-coordenador">
+<h3>Graciella Watanabe</h3>
+<p>Coordenadora do Sudeste</p>
 </div>
 
 </div>
 
 </section>
 
+
 <footer class="rodape">
 
-<div class="rodape-conteudo">
+<div class="rodape-container">
 
-<p class="rodape-texto">Siga-nos no Instagram</p>
+<div class="rodape-bloco">
+
+<h3>Meninas Oyá</h3>
+<p>
+Projeto que incentiva meninas e mulheres nas áreas de
+Computação, Engenharia e Ciências Exatas.
+</p>
+
+</div>
+
+<div class="rodape-bloco">
+
+<h3>Contato</h3>
+<p>Email: contato@meninasoya.com</p>
+<p>Telefone: (00) 00000-0000</p>
+
+</div>
+
+<div class="rodape-bloco">
+
+<h3>Localização</h3>
+<p>Instituto Federal</p>
+<p>Brasil</p>
+
+</div>
+
+<div class="rodape-bloco">
+
+<h3>Redes Sociais</h3>
 
 <a href="https://www.instagram.com/meninasoya/" target="_blank">
 <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png">
 </a>
 
-<p class="copyright">
-© 2025 Meninas Oyá
-</p>
+</div>
 
 </div>
 
+<div class="copyright">
+© 2025 Meninas Oyá • Todos os direitos reservados
+</div>
+
 </footer>
+
+
 
 </main>
 
 </template>
 
+
 <script>
+
 export default {
 
 data(){
 return{
-atividades:[]
+atividades:[],
+noticias:[]
 }
 },
 
 mounted(){
 
+/* BUSCA DO BACKEND */
 fetch("http://localhost:8080/atividade")
 .then(res => res.json())
 .then(dados => {
-
 this.atividades = dados
-
 })
+.catch(error=>{
+console.log("Erro ao buscar atividades:", error)
+})
+
+/* BUSCA DAS NOTICIAS DO PAINEL */
+const dadosNoticias = localStorage.getItem("noticias")
+
+if(dadosNoticias){
+
+this.noticias = JSON.parse(dadosNoticias)
+
+/* ORDENAR DA MAIS RECENTE PARA A MAIS ANTIGA */
+
+this.noticias.sort((a,b)=>{
+return new Date(b.data) - new Date(a.data)
+})
+
+}
+
+},
+
+methods:{
+
+abrirNoticia(noticia){
+
+localStorage.setItem("noticiaSelecionada", JSON.stringify(noticia))
+
+this.$router.push("/noticia")
+
+}
 
 }
 
