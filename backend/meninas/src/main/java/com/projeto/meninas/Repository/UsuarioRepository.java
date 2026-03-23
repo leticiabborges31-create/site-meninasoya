@@ -1,14 +1,13 @@
-package com.projeto.meninas.repository;
+package com.projeto.meninas.Repository;
 
-import com.projeto.meninas.enties.Usuario;
+import com.projeto.meninas.Entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface Usuariorepository
-        extends JpaRepository<Usuario, Long> {
+public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     Optional<Usuario> findByEmail(String email);
 

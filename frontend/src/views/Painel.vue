@@ -1,110 +1,76 @@
 <template>
+  <div class="painel-container">
 
-<div class="painel-container">
+    <h2 class="titulo-painel">Adicionar Atividade</h2>
 
-<h2 class="titulo-painel">Adicionar Notícia</h2>
+    <div class="formulario">
 
-<div class="formulario">
+      <label>Título</label>
+      <input v-model="titulo" type="text" placeholder="Digite o título da atividade" />
 
-<label>Título</label>
-<input v-model="titulo" type="text" placeholder="Digite o título da notícia">
+      <label>Descrição</label>
+      <textarea v-model="descricao" placeholder="Digite a descrição da atividade"></textarea>
 
-<label>Data</label>
-<input type="date" v-model="data">
+      <div class="botoes">
+        <button class="btn-publicar" @click="publicar" :disabled="carregando">
+          {{ carregando ? 'Publicando...' : 'Publicar' }}
+        </button>
+      </div>
 
-<label>Descrição</label>
-<textarea v-model="descricao" placeholder="Digite a descrição da notícia"></textarea>
+      <div v-if="publicado" class="mensagem-sucesso">
+        <p>Atividade publicada com sucesso!</p>
+        <button class="btn-voltar" @click="$router.push('/')">
+          Voltar ao início
+        </button>
+      </div>
 
-<label>Foto</label>
-<input type="file" @change="uploadImagem">
+      <p v-if="erro" class="mensagem-erro">{{ erro }}</p>
 
-<div class="botoes">
+    </div>
 
-<button class="btn-salvar" @click="salvar">
-Salvar
-</button>
-
-<button class="btn-publicar" @click="publicar">
-Publicar
-</button>
-
-</div>
-
-<div v-if="publicado" class="mensagem-sucesso">
-
-<p>✅ Notícia cadastrada!</p>
-
-<button class="btn-voltar" @click="$router.push('/')">
-Voltar ao início
-</button>
-
-</div>
-
-</div>
-
-</div>
-
+  </div>
 </template>
 
 <script>
-export default{
+import api from '../service/api.js'
 
-data(){
-return{
-titulo:'',
-data:'',
-descricao:'',
-imagem:'',
-publicado:false
-}
-},
+export default {
+  data() {
+    return {
+      titulo: '',
+      descricao: '',
+      publicado: false,
+      carregando: false,
+      erro: ''
+    }
+  },
 
-methods:{
+  methods: {
+    async publicar() {
+      this.erro = ''
 
-uploadImagem(e){
+      if (!this.titulo || !this.descricao) {
+        this.erro = 'Preencha título e descrição.'
+        return
+      }
 
-const file=e.target.files[0]
+      this.carregando = true
 
-const reader=new FileReader()
+      try {
+        await api.post('/atividade', {
+          titulo: this.titulo,
+          descricao: this.descricao
+        })
 
-reader.onload=(event)=>{
-this.imagem=event.target.result
-}
-
-reader.readAsDataURL(file)
-
-},
-
-salvar(){
-
-const noticia={
-titulo:this.titulo,
-data:this.data,
-descricao:this.descricao,
-imagem:this.imagem
-}
-
-localStorage.setItem("noticia_temp",JSON.stringify(noticia))
-
-alert("Notícia salva!")
-
-},
-
-publicar(){
-
-const noticia=JSON.parse(localStorage.getItem("noticia_temp"))
-
-let noticias=JSON.parse(localStorage.getItem("noticias")) || []
-
-noticias.push(noticia)
-
-localStorage.setItem("noticias",JSON.stringify(noticias))
-
-this.publicado = true
-
-}
-
-}
-
+        this.publicado = true
+        this.titulo = ''
+        this.descricao = ''
+      } catch {
+        this.erro = 'Erro ao publicar atividade. Tente novamente.'
+      } finally {
+        this.carregando = false
+      }
+    }
+  }
 }
 </script>

@@ -3,8 +3,8 @@ package com.projeto.meninas.Controller;
 import com.projeto.meninas.Entity.Atividade;
 import com.projeto.meninas.Service.AtividadeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,28 +18,20 @@ public class AtividadeController {
 
     // SALVAR ATIVIDADE COM FOTOS
     @PostMapping
-    public Atividade salvar(
-            @RequestParam String titulo,
-            @RequestParam String descricao,
-            @RequestParam("fotos") MultipartFile[] fotos
-    ){
-
-        Atividade atividade = new Atividade();
-        atividade.setTitulo(titulo);
-        atividade.setDescricao(descricao);
-
-        return atividadeService.salvarComFotos(atividade, fotos);
+    public ResponseEntity<Atividade> salvar(@RequestBody Atividade atividade) {
+        return ResponseEntity.ok(atividadeService.salvar(atividade));
     }
 
     // LISTAR (para aparecer no site)
     @GetMapping
-    public List<Atividade> listar(){
-        return atividadeService.listarAtividades();
+    public ResponseEntity<List<Atividade>> listar() {
+        return ResponseEntity.ok(atividadeService.listarAtividades());
     }
 
     // DELETAR
     @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id){
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
         atividadeService.deletar(id);
+        return ResponseEntity.ok().build();
     }
 }

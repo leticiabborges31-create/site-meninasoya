@@ -1,80 +1,97 @@
 <template>
+  <div class="admin-container">
 
-<div class="admin-container">
+    <h2>Cadastro</h2>
 
-<h2>Cadastro</h2>
+    <input v-model="nome" placeholder="Nome completo" />
+    <input v-model="email" placeholder="Email" />
+    <input type="password" v-model="senha" placeholder="Senha" />
 
-<input v-model="nome" placeholder="Nome completo">
-<input v-model="email" placeholder="Email">
-<input type="password" v-model="senha" placeholder="Senha">
+    <button @click="cadastrar">Cadastrar</button>
 
-<button @click="cadastrar">Cadastrar</button>
+    <p v-if="mensagemCadastro" class="mensagem-sucesso">{{ mensagemCadastro }}</p>
+    <p v-if="erroCadastro" class="mensagem-erro">{{ erroCadastro }}</p>
 
-<hr>
+    <hr />
 
-<h2>Login</h2>
+    <h2>Login</h2>
 
-<input v-model="loginEmail" placeholder="Email">
-<input type="password" v-model="loginSenha" placeholder="Senha">
+    <input v-model="loginEmail" placeholder="Email" />
+    <input type="password" v-model="loginSenha" placeholder="Senha" />
 
-<button @click="login">Entrar</button>
+    <button @click="login">Entrar</button>
 
-</div>
+    <p v-if="erroLogin" class="mensagem-erro">{{ erroLogin }}</p>
 
+  </div>
 </template>
 
 <script>
+import api from '../service/api.js'
+
 export default {
+  data() {
+    return {
+      nome: '',
+      email: '',
+      senha: '',
+      loginEmail: '',
+      loginSenha: '',
+      mensagemCadastro: '',
+      erroCadastro: '',
+      erroLogin: ''
+    }
+  },
 
-data(){
-return{
-nome:'',
-email:'',
-senha:'',
-loginEmail:'',
-loginSenha:''
-}
-},
+  methods: {
+    async cadastrar() {
+      this.erroCadastro = ''
+      this.mensagemCadastro = ''
 
-methods:{
+      if (!this.nome || !this.email || !this.senha) {
+        this.erroCadastro = 'Preencha todos os campos.'
+        return
+      }
 
-cadastrar(){
+      try {
+        await api.post('/usuarios', {
+          nome: this.nome,
+          email: this.email,
+          senha: this.senha
+        })
+        this.mensagemCadastro = 'Cadastro realizado com sucesso!'
+        this.nome = ''
+        this.email = ''
+        this.senha = ''
+      } catch {
+        this.erroCadastro = 'Erro ao cadastrar. Tente novamente.'
+      }
+    },
 
-const usuario={
-nome:this.nome,
-email:this.email,
-senha:this.senha
-}
+    async login() {
+      this.erroLogin = ''
 
-localStorage.setItem("usuario",JSON.stringify(usuario))
+      if (!this.loginEmail || !this.loginSenha) {
+        this.erroLogin = 'Preencha email e senha.'
+        return
+      }
 
-alert("Cadastro realizado!")
+      try {
+        const response = await api.post('/usuarios/login', {
+          email: this.loginEmail,
+          senha: this.loginSenha
+        })
 
-},
-
-login(){
-
-const usuario=JSON.parse(localStorage.getItem("usuario"))
-
-if(
-usuario &&
-usuario.email === this.loginEmail &&
-usuario.senha === this.loginSenha
-){
-
-localStorage.setItem("logado",true)
-
-this.$router.push("/painel")
-
-}else{
-
-alert("Email ou senha incorretos")
-
-}
-
-}
-
-}
-
+        if (response.data === true) {
+          localStorage.setItem('logado', 'true')
+          this.$router.push('/painel')
+        } else {
+          this.erroLogin = 'Email ou senha incorretos.'
+        }
+      } catch {
+        this.erroLogin = 'Email ou senha incorretos.'
+      }
+    }
+  }
 }
 </script>
