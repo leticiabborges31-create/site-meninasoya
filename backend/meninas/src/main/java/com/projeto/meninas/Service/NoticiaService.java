@@ -1,7 +1,7 @@
 package com.projeto.meninas.Service;
 
-import com.projeto.meninas.enties.Atividade;
-import com.projeto.meninas.repository.Atividaderepository;
+import com.projeto.meninas.Entity.Atividade;
+import com.projeto.meninas.Repository.AtividadeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AtividadeService {
 
-    private final Atividaderepository repository;
+    private final AtividadeRepository repository;
 
     // SALVAR
     public Atividade salvar(Atividade atividade){

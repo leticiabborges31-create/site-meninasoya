@@ -1,4 +1,4 @@
-package com.projeto.meninas.enties;
+package com.projeto.meninas.Entitys;
 
 import jakarta.persistence.*;
 import lombok.*;

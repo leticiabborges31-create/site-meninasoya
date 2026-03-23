@@ -1,11 +1,11 @@
-package com.projeto.meninas.repository;
+package com.projeto.meninas.Repository;
 
-import com.projeto.meninas.enties.Atividade;
+import com.projeto.meninas.Entity.Atividade;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface Atividaderepository
+public interface AtividadeRepository
         extends JpaRepository<Atividade, Long> {
 
 }
