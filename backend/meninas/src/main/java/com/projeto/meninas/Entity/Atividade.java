@@ -19,4 +19,6 @@ public class Atividade {
     private String descricao;
 
     private Long idProfessor;
+
+    private String data; // ✅ CORRETO
 }
