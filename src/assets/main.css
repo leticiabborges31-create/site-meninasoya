@@ -104,7 +104,7 @@ color:black;
 
 /* NOTICIAS */
 .noticias{
-padding:60px 8%;
+padding:60px 20%;
 }
 
 .grid-noticias{
@@ -115,18 +115,27 @@ gap:30px;
 
 /* CARD NOTICIA */
 .card-noticia{
-background:#f5f5f5;
-color:black;
-padding:25px;
-border-radius:10px;
-box-shadow:0 4px 15px rgba(0,0,0,0.1);
-transition:0.3s;
-cursor:pointer;
+  width:100%;
+  background:white;
+  padding:25px;
+  border-radius:12px;
+
+  /* 🔥 BORDA LARANJA */
+  border:2px solid #ff8a3d;
+
+  /* SOMBRA SUAVE */
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+
+  cursor:pointer;
+  text-align:center;
+  transition:0.3s;
 }
 
+/* HOVER MODERNO */
 .card-noticia:hover{
-transform:translateY(-8px);
-box-shadow:0 10px 20px rgba(0,0,0,0.2);
+  transform:translateY(-6px);
+  box-shadow:0 12px 25px rgba(0,0,0,0.15);
+  border-color:#ff6a00;
 }
 
 .card-noticia h3{
@@ -389,4 +398,369 @@ padding-top:10px;
 text-align:center;
 font-size:14px;
 color:#555;
+}
+body{
+margin:0;
+font-family:'Poppins', sans-serif;
+background:#f7f7f7;
+color:black;
+}
+.auth-container{
+display:flex;
+justify-content:center;
+align-items:center;
+height:80vh;
+}
+.auth-box{
+width:100%;
+max-width:400px;
+background:white;
+padding:40px;
+border-radius:12px;
+box-shadow:0 8px 25px rgba(0,0,0,0.1);
+text-align:center;
+}
+.auth-box h2{
+margin-bottom:20px;
+color:#ff8a3d;
+font-weight:600;
+}
+.auth-box input{
+width:100%;
+padding:12px;
+margin-bottom:15px;
+border-radius:6px;
+border:1px solid #ddd;
+font-size:14px;
+outline:none;
+transition:0.3s;
+}
+
+.auth-box input:focus{
+border-color:#ff8a3d;
+box-shadow:0 0 5px rgba(255,138,61,0.3);
+}
+.auth-btn{
+width:100%;
+padding:14px;
+background:#ff8a3d;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+font-size:15px;
+transition:0.3s;
+}
+
+.auth-btn:hover{
+background:#e6762f;
+}
+/* FUNDO DA TELA */
+.auth-container{
+display:flex;
+justify-content:center;
+align-items:center;
+height:90vh;
+background:#f7f7f7;
+}
+
+/* CAIXA CENTRAL */
+.auth-box{
+width:100%;
+max-width:420px;
+background:white;
+padding:40px;
+border-radius:12px;
+box-shadow:0 8px 25px rgba(0,0,0,0.1);
+text-align:center;
+}
+
+/* TITULOS */
+.auth-box h2{
+color:#ff8a3d;
+margin-bottom:15px;
+font-weight:600;
+}
+
+/* INPUTS */
+.auth-box input{
+width:100%;
+padding:12px;
+margin-bottom:12px;
+border-radius:6px;
+border:1px solid #ddd;
+font-size:14px;
+outline:none;
+transition:0.3s;
+}
+
+.auth-box input:focus{
+border-color:#ff8a3d;
+box-shadow:0 0 5px rgba(255,138,61,0.3);
+}
+
+/* BOTÃO */
+.auth-btn{
+width:100%;
+padding:14px;
+background:#ff8a3d;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+font-size:15px;
+transition:0.3s;
+}
+
+.auth-btn:hover{
+background:#e6762f;
+}
+
+/* LINHA */
+.auth-box hr{
+margin:25px 0;
+border:none;
+height:1px;
+background:#eee;
+}
+
+.lista-container{
+max-width:800px;
+margin:60px auto;
+padding:20px;
+}
+
+.lista-noticias{
+list-style:none;
+padding:0;
+}
+
+.lista-noticias li{
+background:white;
+padding:15px;
+margin-bottom:10px;
+border-radius:8px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+cursor:pointer;
+transition:0.3s;
+}
+
+.lista-noticias li:hover{
+background:#ffe3c7;
+}
+
+.lista-noticias a{
+text-decoration:none;
+color:black;
+font-weight:500;
+}
+.icone{
+width:20px;
+height:20px;
+cursor:pointer;
+transition:0.2s;
+}
+
+.icone:hover{
+transform:scale(1.2);
+opacity:0.8;
+}
+
+.acoes{
+display:flex;
+gap:10px;
+align-items:center;
+}
+.carrossel{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:20px;
+position:relative;
+}
+
+.carrossel-container {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  width: 100%;
+}
+
+.btn-carrossel{
+background:#ff8a3d;
+border:none;
+color:white;
+font-size:24px;
+padding:10px 15px;
+border-radius:50%;
+cursor:pointer;
+transition:0.3s;
+}
+
+.btn-carrossel:hover{
+background:#e6762f;
+transform:scale(1.1);
+}
+
+.card-noticia{
+width:100%;
+background:#f5f5f5;
+padding:25px;
+border-radius:10px;
+box-shadow:0 4px 15px rgba(0,0,0,0.1);
+cursor:pointer;
+text-align:center;
+transition:0.3s;
+}
+
+.card-noticia:hover{
+transform:translateY(-5px);
+}
+style scoped>
+
+/* CARROSSEL */
+.carrossel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.carrossel-container {
+  display: flex;
+  gap: 20px;
+}
+
+/* CARD */
+.card-noticia {
+  width: 360px;   /* mais largo */
+  height: 200px;  /* menor altura */
+  padding: 20px;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  transition: 0.3s;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-noticia:hover {
+  transform: scale(1.05);
+}
+
+/* BOTÕES */
+.btn-carrossel {
+  font-size: 25px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* DATA */
+.data {
+  font-size: 12px;
+  color: gray;
+}
+
+</style>
+.carrossel-container {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  width: 100%;
+}
+/* FUNDO */
+.auth-container{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  background:linear-gradient(135deg, #fff5ec, #ffe3c7);
+}
+
+/* CAIXA PRINCIPAL */
+.auth-box{
+  width:100%;
+  max-width:420px;
+  background:white;
+  padding:40px;
+  border-radius:16px;
+
+  /* 🔥 BORDA LARANJA MODERNA */
+  border:2px solid #ff8a3d;
+
+  /* SOMBRA SUAVE */
+  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+
+  text-align:center;
+  transition:0.3s;
+}
+
+/* EFEITO AO PASSAR O MOUSE */
+.auth-box:hover{
+  transform:translateY(-5px);
+  box-shadow:0 15px 40px rgba(0,0,0,0.12);
+}
+
+/* TÍTULO */
+.auth-box h2{
+  color:#ff8a3d;
+  margin-bottom:20px;
+  font-weight:600;
+}
+
+/* INPUTS */
+.auth-box input{
+  width:100%;
+  padding:12px;
+  margin-bottom:12px;
+  border-radius:8px;
+  border:1px solid #ddd;
+  font-size:14px;
+  outline:none;
+  transition:0.3s;
+}
+
+/* FOCO LARANJA */
+.auth-box input:focus{
+  border-color:#ff8a3d;
+  box-shadow:0 0 8px rgba(255,138,61,0.3);
+}
+
+/* BOTÃO */
+.auth-btn{
+  width:100%;
+  padding:14px;
+  background:linear-gradient(135deg, #ff8a3d, #ff6a00);
+  color:white;
+  border:none;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+  font-size:15px;
+  transition:0.3s;
+}
+
+/* HOVER BOTÃO */
+.auth-btn:hover{
+  transform:scale(1.03);
+  box-shadow:0 5px 15px rgba(255,138,61,0.4);
+}
+
+/* BOTÃO SECUNDÁRIO */
+.auth-box button{
+  margin-top:10px;
+  background:none;
+  border:none;
+  color:#ff8a3d;
+  cursor:pointer;
+  font-weight:500;
+}
+
+.auth-box button:hover{
+  text-decoration:underline;
 }

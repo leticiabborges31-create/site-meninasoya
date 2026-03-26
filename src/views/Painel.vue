@@ -1,110 +1,137 @@
 <template>
+  <div class="painel-container">
 
-<div class="painel-container">
+    <!-- BOTÃO SAIR -->
+    <button class="logout" @click="logout">Sair</button>
 
-<h2 class="titulo-painel">Adicionar Notícia</h2>
+    <h2>{{ editando ? "Editar Atividade" : "Adicionar Atividade" }}</h2>
 
-<div class="formulario">
+    <div class="formulario">
 
-<label>Título</label>
-<input v-model="titulo" type="text" placeholder="Digite o título da notícia">
+      <label>Título</label>
+      <input v-model="titulo" type="text" placeholder="Digite o título" />
 
-<label>Data</label>
-<input type="date" v-model="data">
+      <label>Data</label>
+      <input type="date" v-model="dataNoticia" />
 
-<label>Descrição</label>
-<textarea v-model="descricao" placeholder="Digite a descrição da notícia"></textarea>
+      <label>Descrição</label>
+      <textarea v-model="descricao" placeholder="Digite a descrição"></textarea>
 
-<label>Foto</label>
-<input type="file" @change="uploadImagem">
+      <label>Imagem</label>
+      <input type="file" @change="uploadImagem" />
 
-<div class="botoes">
+      <br><br>
 
-<button class="btn-salvar" @click="salvar">
-Salvar
-</button>
+      <button @click="publicar">Publicar</button>
 
-<button class="btn-publicar" @click="publicar">
-Publicar
-</button>
+      <div v-if="publicado">
+        <p>✅ Salvo com sucesso</p>
+      </div>
 
-</div>
+    </div>
 
-<div v-if="publicado" class="mensagem-sucesso">
-
-<p>✅ Notícia cadastrada!</p>
-
-<button class="btn-voltar" @click="$router.push('/')">
-Voltar ao início
-</button>
-
-</div>
-
-</div>
-
-</div>
-
+  </div>
 </template>
 
 <script>
-export default{
+export default {
 
-data(){
-return{
-titulo:'',
-data:'',
-descricao:'',
-imagem:'',
-publicado:false
-}
-},
+  data(){
+    return{
+      titulo:'',
+      dataNoticia:'',
+      descricao:'',
+      file:null,
+      publicado:false,
+      editando:false
+    }
+  },
 
-methods:{
+  methods:{
 
-uploadImagem(e){
+    uploadImagem(e){
+      this.file = e.target.files[0]
+    },
 
-const file=e.target.files[0]
+    async publicar(){
+      try {
 
-const reader=new FileReader()
+        const formData = new FormData()
+        formData.append("titulo", this.titulo)
+        formData.append("descricao", this.descricao)
+        formData.append("data", this.dataNoticia)
 
-reader.onload=(event)=>{
-this.imagem=event.target.result
-}
+        if(this.file){
+          formData.append("foto", this.file) // ⚠️ se backend for "fotos", muda aqui
+        }
 
-reader.readAsDataURL(file)
+        const response = await fetch("http://localhost:8080/atividade", {
+          method: "POST",
+          body: formData
+        })
 
-},
+        // 🔥 MOSTRA ERRO REAL DO BACKEND
+        if (!response.ok) {
+          const erro = await response.text()
+          throw new Error(erro)
+        }
 
-salvar(){
+        this.publicado = true
 
-const noticia={
-titulo:this.titulo,
-data:this.data,
-descricao:this.descricao,
-imagem:this.imagem
-}
+        // limpar formulário
+        this.titulo = ''
+        this.dataNoticia = ''
+        this.descricao = ''
+        this.file = null
 
-localStorage.setItem("noticia_temp",JSON.stringify(noticia))
+        alert("Salvo com sucesso!")
 
-alert("Notícia salva!")
+      } catch (e) {
+        console.error(e)
+        alert("Erro ao salvar: " + e.message)
+      }
+    },
 
-},
+    // 🔴 LOGOUT
+    logout(){
+      localStorage.removeItem("logado")
+      this.$router.push("/admin")
+    }
 
-publicar(){
-
-const noticia=JSON.parse(localStorage.getItem("noticia_temp"))
-
-let noticias=JSON.parse(localStorage.getItem("noticias")) || []
-
-noticias.push(noticia)
-
-localStorage.setItem("noticias",JSON.stringify(noticias))
-
-this.publicado = true
-
-}
-
-}
-
+  }
 }
 </script>
+
+<style scoped>
+
+.painel-container {
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+}
+
+input, textarea {
+  margin-bottom: 10px;
+  padding: 8px;
+}
+
+button {
+  padding: 10px;
+  background: orange;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+/* BOTÃO SAIR */
+.logout {
+  background: red;
+  margin-bottom: 20px;
+}
+
+</style>

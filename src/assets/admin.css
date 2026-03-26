@@ -1,38 +1,83 @@
-.admin-container{
-width:400px;
-margin:60px auto;
-padding:30px;
-background:#fff;
-border-radius:10px;
-box-shadow:0 4px 15px rgba(0,0,0,0.1);
-text-align:center;
+/* CONTAINER PRINCIPAL */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5%;
 }
 
-.admin-container h2{
-margin-bottom:20px;
+/* CAIXA */
+.auth-box {
+    width: 400px;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #ddd;
 }
 
-.admin-container input{
-width:100%;
-padding:10px;
-margin:8px 0;
-border-radius:5px;
-border:1px solid #ccc;
+/* TÍTULOS */
+.auth-box h2 {
+    margin-bottom: 15px;
+    font-size: 1.6em;
+    color: #222;
 }
 
-.admin-container button{
-width:100%;
-padding:10px;
-margin-top:10px;
-border:none;
-border-radius:5px;
-background:#f47c34;
-color:white;
-font-weight:bold;
-cursor:pointer;
-transition:0.3s;
+/* INPUTS */
+.auth-box input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
 }
 
-.admin-container button:hover{
-background:#d9651e;
+/* FOCO */
+.auth-box input:focus {
+    outline: none;
+    border-color: #555;
+}
+
+/* BOTÃO */
+.auth-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #222;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+/* HOVER */
+.auth-btn:hover {
+    background-color: #444;
+}
+
+/* DIVISOR */
+.auth-box hr {
+    margin: 20px 0;
+    border: none;
+    border-top: 1px solid #eee;
+}
+
+/* TEXTO */
+.auth-box p {
+    font-size: 13px;
+    margin-top: 10px;
+}
+
+/* BOTÃO LINK */
+.auth-box p button {
+    background: none;
+    border: none;
+    color: #000;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.auth-box p button:hover {
+    text-decoration: underline;
 }
