@@ -19,7 +19,6 @@
         <img
           src="https://raw.githubusercontent.com/leticiabborges31-create/-assets-images-/5455c9e515bc4ce5c6691d8819f0c0a789ff524b/assets/images/meninas_oya%20(1).svg"
           class="imagem-redonda"
-          alt="Logo Meninas Oyá"
         />
 
         <div class="texto-lado">
@@ -33,23 +32,23 @@
       </div>
     </section>
 
-    <!-- NOTÍCIAS -->
-    <section id="noticias" class="secao clara noticias">
-      <h2 class="titulo-secao">Notícias</h2>
+    <!-- ATIVIDADES -->
+    <section id="atividades" class="secao clara noticias">
+      <h2 class="titulo-secao">Atividades</h2>
 
-      <div class="carrossel" v-if="noticias.length > 0">
+      <div class="carrossel" v-if="atividades.length > 0">
         <button class="btn-carrossel esquerda" @click="voltar">❮</button>
 
         <div class="carrossel-container">
           <div
             class="card-noticia"
-            v-for="(noticia, index) in noticiasVisiveis"
+            v-for="(atividade, index) in atividadesVisiveis"
             :key="index"
-            @click="abrirNoticia(noticia)"
+            @click="abrirAtividade(atividade)"
           >
-            <h3>{{ noticia.titulo }}</h3>
-            <p>{{ noticia.descricao }}</p>
-            <p class="data">{{ noticia.data }}</p>
+            <h3>{{ atividade.titulo }}</h3>
+            <p>{{ atividade.descricao }}</p>
+            <p class="data">{{ atividade.data }}</p>
           </div>
         </div>
 
@@ -57,7 +56,7 @@
       </div>
 
       <div v-else class="sem-noticias">
-        <p>Nenhuma notícia cadastrada no momento.</p>
+        <p>Nenhuma atividade cadastrada no momento.</p>
       </div>
     </section>
 
@@ -96,8 +95,7 @@
         <div class="card-coordenador">
           <img src="@/assets/ines.png" class="foto-coordenador">
           <h3>Inés Prieto Schmidt Sauerwein</h3>
-          <a href="
-http://lattes.cnpq.br/7906512702835414" target="_blank" class="link-lattes">
+          <a href="http://lattes.cnpq.br/7906512702835414" target="_blank" class="link-lattes">
             Currículo Lattes
           </a>
           <p>Coordenadora do Sul</p>
@@ -106,7 +104,7 @@ http://lattes.cnpq.br/7906512702835414" target="_blank" class="link-lattes">
         <div class="card-coordenador">
           <img src="@/assets/graciella.png" class="foto-coordenador">
           <h3>Graciella Watanabe</h3>
-          <a href=" http://lattes.cnpq.br/0022322386442215" target="_blank" class="link-lattes">
+          <a href="http://lattes.cnpq.br/0022322386442215" target="_blank" class="link-lattes">
             Currículo Lattes
           </a>
           <p>Coordenadora do Sudeste</p>
@@ -119,27 +117,6 @@ http://lattes.cnpq.br/7906512702835414" target="_blank" class="link-lattes">
       <div class="rodape-container">
         <div class="rodape-bloco">
           <h3>Meninas Oyá</h3>
-          <p>
-            Projeto que incentiva meninas e mulheres nas áreas de Computação,
-            Engenharia e Ciências Exatas.
-          </p>
-        </div>
-
-        <div class="rodape-bloco">
-          <h3>Contato</h3>
-          <p>Email: meninas_oya@ufma.br</p>
-        </div>
-
-        <div class="rodape-bloco">
-          <h3>Localização</h3>
-          <p>UFMA - Brasil</p>
-        </div>
-
-        <div class="rodape-bloco">
-          <h3>Redes Sociais</h3>
-          <a href="https://www.instagram.com/meninasoya/" target="_blank">
-            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" width="30">
-          </a>
         </div>
       </div>
 
@@ -154,55 +131,59 @@ http://lattes.cnpq.br/7906512702835414" target="_blank" class="link-lattes">
 export default {
   data() {
     return {
-      noticias: [],
       atividades: [],
       indiceAtual: 0
     };
   },
 
   computed: {
-    noticiasVisiveis() {
-      if (this.noticias.length === 0) return [];
+    atividadesVisiveis() {
+      if (this.atividades.length === 0) return [];
 
-      if (this.noticias.length < 3) return this.noticias;
+      if (this.atividades.length < 3) return this.atividades;
 
       return [
-        this.noticias[this.indiceAtual],
-        this.noticias[(this.indiceAtual + 1) % this.noticias.length],
-        this.noticias[(this.indiceAtual + 2) % this.noticias.length]
+        this.atividades[this.indiceAtual],
+        this.atividades[(this.indiceAtual + 1) % this.atividades.length],
+        this.atividades[(this.indiceAtual + 2) % this.atividades.length]
       ];
     }
   },
 
   mounted() {
-    fetch("http://localhost:8080/atividade")
-      .then(res => res.json())
-      .then(dados => {
-        this.atividades = dados;
-      })
-      .catch(error => console.error(error));
-
-    const dadosNoticias = localStorage.getItem("noticias");
-    if (dadosNoticias) {
-      this.noticias = JSON.parse(dadosNoticias);
-      this.noticias.sort((a, b) => new Date(b.data) - new Date(a.data));
-    }
+    this.carregarAtividades();
   },
 
   methods: {
-    abrirNoticia(noticia) {
-      localStorage.setItem("noticiaSelecionada", JSON.stringify(noticia));
-      this.$router.push("/noticia");
+
+    // ✅ FUNÇÃO CENTRAL (ESSA É A CORREÇÃO)
+    carregarAtividades() {
+      fetch("http://localhost:8080/atividade")
+        .then(res => res.json())
+        .then(dados => {
+          this.atividades = dados;
+
+          // 🔥 CORREÇÃO DA DATA (funciona com yyyy-MM-dd)
+          this.atividades.sort((a, b) => {
+            return new Date(b.data) - new Date(a.data);
+          });
+        })
+        .catch(error => console.error("Erro ao buscar atividades:", error));
+    },
+
+    abrirAtividade(atividade) {
+      localStorage.setItem("atividadeSelecionada", JSON.stringify(atividade));
+      this.$router.push("/atividade");
     },
 
     avancar() {
       this.indiceAtual =
-        (this.indiceAtual + 1) % this.noticias.length;
+        (this.indiceAtual + 1) % this.atividades.length;
     },
 
     voltar() {
       this.indiceAtual =
-        (this.indiceAtual - 1 + this.noticias.length) % this.noticias.length;
+        (this.indiceAtual - 1 + this.atividades.length) % this.atividades.length;
     }
   }
 };

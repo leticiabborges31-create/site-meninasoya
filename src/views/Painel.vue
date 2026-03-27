@@ -54,43 +54,49 @@ export default {
     },
 
     async publicar(){
-      try {
+  try {
 
-        const formData = new FormData()
-        formData.append("titulo", this.titulo)
-        formData.append("descricao", this.descricao)
-        formData.append("data", this.dataNoticia)
+    const formData = new FormData()
+    formData.append("titulo", this.titulo)
+    formData.append("descricao", this.descricao)
+    formData.append("data", this.dataNoticia)
 
-        if(this.file){
-          formData.append("foto", this.file) // ⚠️ se backend for "fotos", muda aqui
-        }
+    if(this.file){
+      formData.append("foto", this.file)
+    }
 
-        const response = await fetch("http://localhost:8080/atividade", {
-          method: "POST",
-          body: formData
-        })
+    const response = await fetch("http://localhost:8080/atividade", {
+      method: "POST",
+      body: formData
+    })
 
-        // 🔥 MOSTRA ERRO REAL DO BACKEND
-        if (!response.ok) {
-          const erro = await response.text()
-          throw new Error(erro)
-        }
+    if (!response.ok) {
+      const erro = await response.text()
+      throw new Error(erro)
+    }
 
-        this.publicado = true
+    // ✅ NOVO: BUSCAR ATIVIDADES DE NOVO
+    await fetch("http://localhost:8080/atividade")
+      .then(res => res.json())
+      .then(dados => {
+        this.$emit("atualizarAtividades", dados) // 🔥 importante
+      })
 
-        // limpar formulário
-        this.titulo = ''
-        this.dataNoticia = ''
-        this.descricao = ''
-        this.file = null
+    this.publicado = true
 
-        alert("Salvo com sucesso!")
+    // limpar formulário
+    this.titulo = ''
+    this.dataNoticia = ''
+    this.descricao = ''
+    this.file = null
 
-      } catch (e) {
-        console.error(e)
-        alert("Erro ao salvar: " + e.message)
-      }
-    },
+    alert("Salvo com sucesso!")
+
+  } catch (e) {
+    console.error(e)
+    alert("Erro ao salvar: " + e.message)
+  }
+},
 
     // 🔴 LOGOUT
     logout(){

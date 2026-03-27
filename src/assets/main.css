@@ -618,7 +618,6 @@ transition:0.3s;
 .card-noticia:hover{
 transform:translateY(-5px);
 }
-style scoped>
 
 /* CARROSSEL */
 .carrossel {
@@ -666,7 +665,6 @@ style scoped>
   color: gray;
 }
 
-</style>
 .carrossel-container {
   display: flex;
   gap: 30px;
@@ -763,4 +761,88 @@ style scoped>
 
 .auth-box button:hover{
   text-decoration:underline;
+}
+
+/* ===== LISTA DE ATIVIDADES ===== */
+
+.lista-atividades{
+  list-style:none;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+/* CARD RETANGULAR */
+.card-atividade{
+  background:white;
+  padding:20px 25px;
+  border-radius:14px;
+
+  /* 🔥 BORDA LATERAL MODERNA */
+  border-left:6px solid #ff8a3d;
+
+  /* SOMBRA MAIS SUAVE */
+  box-shadow:0 8px 20px rgba(0,0,0,0.06);
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  transition:all 0.3s ease;
+}
+
+/* HOVER MAIS BONITO */
+.card-atividade:hover{
+  transform:translateY(-4px) scale(1.01);
+  box-shadow:0 12px 28px rgba(0,0,0,0.12);
+  border-left:6px solid #ff6a00;
+}
+
+/* CONTEÚDO */
+.conteudo{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  max-width:75%;
+}
+
+.conteudo strong{
+  font-size:18px;
+  font-weight:600;
+  color:#222;
+}
+
+.conteudo p{
+  font-size:14px;
+  color:#666;
+  line-height:1.4;
+}
+
+/* DATA */
+.data{
+  font-size:12px;
+  color:#999;
+  margin-top:5px;
+}
+
+/* AÇÕES (ícones) */
+.acoes{
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+
+/* ÍCONES */
+.icone{
+  width:22px;
+  height:22px;
+  cursor:pointer;
+  transition:0.2s;
+  opacity:0.7;
+}
+
+.icone:hover{
+  transform:scale(1.2);
+  opacity:1;
 }
