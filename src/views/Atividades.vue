@@ -5,25 +5,32 @@
       <p class="atividades-subtitulo">Confira nossas atividades mais recentes</p>
     </div>
 
-    <div v-if="carregando" class="loading">Carregando...</div>
+    <!-- LOADING -->
+    <div v-if="carregando" class="loading">
+      <span>Carregando...</span>
+    </div>
 
+    <!-- LISTA -->
     <div v-else-if="atividades.length > 0" class="lista-atividades">
       <div
         v-for="atividade in atividades"
         :key="atividade.id"
         class="card-atividade"
       >
-        <img
-          v-if="atividade.id"
-          :src="`http://localhost:8080/atividades/${atividade.id}/foto`"
-          :alt="atividade.titulo"
-          class="card-imagem"
-          @error="e => e.target.style.display='none'"
-        />
+        <!-- IMAGEM -->
+        <div class="card-imagem" v-if="atividade.id">
+          <img
+            :src="`http://localhost:8080/atividades/${atividade.id}/foto`"
+            :alt="atividade.titulo"
+            @error="e => e.target.style.display='none'"
+          />
+        </div>
 
+        <!-- CONTEÚDO -->
         <div class="card-conteudo">
           <div class="card-topo">
             <span class="card-data">📅 {{ formatarData(atividade.data) }}</span>
+            <!-- ÍCONES (só aparece se logado) -->
             <div class="card-acoes" v-if="isLogado">
               <button @click="editar(atividade)" class="btn-editar" title="Editar">✏️</button>
               <button @click="apagar(atividade.id)" class="btn-apagar" title="Apagar">🗑️</button>
@@ -35,6 +42,7 @@
       </div>
     </div>
 
+    <!-- VAZIO -->
     <div v-else class="vazio">
       <p>Nenhuma atividade encontrada.</p>
     </div>
@@ -87,12 +95,14 @@ export default {
         const token = localStorage.getItem("token")
         const response = await fetch(`http://localhost:8080/atividades/${id}`, {
           method: "DELETE",
-          headers: { "Authorization": `Bearer ${token}` }
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
         })
         if (!response.ok) throw new Error("Erro ao apagar")
         this.atividades = this.atividades.filter(a => a.id !== id)
       } catch (error) {
-        alert("Erro ao apagar: " + error.message)
+        alert("Erro ao apagar atividade: " + error.message)
       }
     }
   }
@@ -124,19 +134,21 @@ export default {
   color: #888;
 }
 
+/* LISTA */
 .lista-atividades {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
+/* CARD */
 .card-atividade {
   background: white;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
   overflow: hidden;
-  border-left: 5px solid #ff8a3d;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-left: 5px solid #ff8a3d;
 }
 
 .card-atividade:hover {
@@ -144,12 +156,14 @@ export default {
   box-shadow: 0 8px 30px rgba(0,0,0,0.12);
 }
 
-.card-imagem {
+/* IMAGEM */
+.card-imagem img {
   width: 100%;
   height: 200px;
   object-fit: cover;
 }
 
+/* CONTEÚDO */
 .card-conteudo {
   padding: 24px;
 }
@@ -167,6 +181,7 @@ export default {
   font-weight: 600;
 }
 
+/* AÇÕES */
 .card-acoes {
   display: flex;
   gap: 8px;
@@ -183,8 +198,13 @@ export default {
   transition: background 0.2s;
 }
 
-.btn-editar:hover { background: #fff3e0; }
-.btn-apagar:hover { background: #fdecea; }
+.btn-editar:hover {
+  background: #fff3e0;
+}
+
+.btn-apagar:hover {
+  background: #fdecea;
+}
 
 .card-titulo {
   font-size: 20px;
@@ -199,16 +219,27 @@ export default {
   line-height: 1.6;
 }
 
-.loading, .vazio {
+/* LOADING / VAZIO */
+.loading,
+.vazio {
   text-align: center;
   padding: 60px 20px;
   color: #888;
   font-size: 16px;
 }
 
+/* RESPONSIVO */
 @media (max-width: 600px) {
-  .atividades-titulo { font-size: 26px; }
-  .card-conteudo { padding: 16px; }
-  .card-titulo { font-size: 17px; }
+  .atividades-titulo {
+    font-size: 26px;
+  }
+
+  .card-conteudo {
+    padding: 16px;
+  }
+
+  .card-titulo {
+    font-size: 17px;
+  }
 }
 </style>

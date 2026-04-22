@@ -1,34 +1,45 @@
 .grid{
 display:grid;
 grid-template-columns:repeat(2,1fr);
-gap:30px;
-padding:40px;
+gap:50px;
+padding:60px;
 }
 
 .card{
 background:white;
 border-radius:10px;
 box-shadow:0 4px 10px rgba(0,0,0,0.1);
-padding:20px;
+padding:40px;
 transition:0.3s;
+min-height:350px;
+display:flex;
+flex-direction:column;
+justify-content:center;
 }
 
 .card:hover{
 transform:translateY(-5px);
+box-shadow:0 8px 20px rgba(0,0,0,0.15);
 }
 
 .card img{
 width:100%;
 border-radius:10px;
-margin-bottom:10px;
+margin-bottom:20px;
+height:200px;
+object-fit:cover;
 }
 
 .card h3{
-margin:5px 0;
+margin:10px 0;
+font-size:22px;
+color:#ff8a3d;
 }
 
 .card p{
 color:#777;
+font-size:16px;
+line-height:1.5;
 }
 /* FUNDO DA PÁGINA */
 body{
