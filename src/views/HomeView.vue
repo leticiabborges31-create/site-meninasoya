@@ -270,7 +270,7 @@ export default {
 <style scoped>
 /* ── BASE ────────────────────────────────────────────── */
 .home {
-  font-family: 'Georgia', 'Times New Roman', serif;
+  font-family: inherit;
   background: #fdfcfa;
   color: #1a1a18;
   overflow-x: hidden;
@@ -279,7 +279,8 @@ export default {
 /* ── HERO ────────────────────────────────────────────── */
 .hero {
   background-color: #1a3a16 !important;
-  min-height: 100vh;
+  height: calc(100vh - 3.5rem);
+  min-height: 540px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -305,31 +306,33 @@ export default {
   align-items: center;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 6rem 4rem;
+  padding: 3rem 4rem;
   position: relative;
   z-index: 1;
 }
 
 .hero-tag {
-  display: inline-block;
-  font-family: 'Courier New', monospace;
-  font-size: 0.78rem;
-  letter-spacing: 0.14em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  font-weight: 600;
   color: #f07030;
-  border: 1px solid rgba(240, 112, 48, 0.5);
-  padding: 0.35rem 0.9rem;
+  background: rgba(240, 112, 48, 0.12);
+  padding: 0.3rem 0.85rem;
   border-radius: 999px;
   margin-bottom: 1.5rem;
 }
 
 .hero-titulo {
-  font-size: clamp(3rem, 6vw, 5.5rem);
-  font-weight: 400;
+  font-size: clamp(2.4rem, 5vw, 4.5rem);
+  font-weight: 800;
   line-height: 1.05;
   color: #f5f2ec !important;
-  margin: 0 0 1.5rem;
-  letter-spacing: -0.02em;
+  margin: 0 0 1.2rem;
+  letter-spacing: -0.03em;
 }
 
 .hero-titulo em {
@@ -338,12 +341,12 @@ export default {
 }
 
 .hero-sub {
-  font-size: 1.15rem;
-  color: rgba(245, 242, 236, 0.8) !important;
+  font-size: 1rem;
+  color: rgba(245, 242, 236, 0.75) !important;
   line-height: 1.7;
   max-width: 440px;
-  margin-bottom: 2.5rem;
-  font-family: 'Georgia', serif;
+  margin-bottom: 2rem;
+  font-weight: 400;
 }
 
 .hero-btns {
@@ -355,35 +358,34 @@ export default {
 .btn-primary {
   background: #d95f1c;
   color: #fff !important;
-  padding: 0.9rem 2rem;
+  padding: 0.85rem 1.75rem;
   border-radius: 999px;
   text-decoration: none;
-  font-family: 'Courier New', monospace;
-  font-size: 0.88rem;
-  letter-spacing: 0.06em;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
   font-weight: 700;
-  transition: background 0.2s, transform 0.2s;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 
 .btn-primary:hover {
   background: #f07030;
   transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(217, 95, 28, 0.3);
 }
 
 .btn-outline {
-  border: 1.5px solid rgba(245, 242, 236, 0.4);
+  border: 1.5px solid rgba(245, 242, 236, 0.35);
   color: #f5f2ec !important;
-  padding: 0.9rem 2rem;
+  padding: 0.85rem 1.75rem;
   border-radius: 999px;
   text-decoration: none;
-  font-family: 'Courier New', monospace;
-  font-size: 0.88rem;
-  letter-spacing: 0.06em;
+  font-size: 0.875rem;
+  font-weight: 600;
   transition: border-color 0.2s, background 0.2s;
 }
 
 .btn-outline:hover {
-  border-color: rgba(245, 242, 236, 0.8);
+  border-color: rgba(245, 242, 236, 0.7);
   background: rgba(245, 242, 236, 0.08);
 }
 
@@ -418,12 +420,11 @@ export default {
   left: -1rem;
   background: #d95f1c;
   color: #fff !important;
-  padding: 0.8rem 1.3rem;
+  padding: 0.75rem 1.2rem;
   border-radius: 1rem;
-  font-size: 0.88rem;
-  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   box-shadow: 0 8px 24px rgba(217, 95, 28, 0.4);
 }
 
@@ -465,23 +466,24 @@ export default {
 
 .secao-tag {
   display: inline-block;
-  font-family: 'Courier New', monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  font-weight: 700;
   color: #d95f1c;
-  border-bottom: 2px solid #d95f1c;
-  padding-bottom: 0.2rem;
+  background: rgba(217, 95, 28, 0.1);
+  padding: 0.28rem 0.75rem;
+  border-radius: 999px;
   margin-bottom: 1.2rem;
 }
 
 .sobre-titulo {
   font-size: clamp(1.9rem, 3.5vw, 2.8rem);
-  font-weight: 400;
+  font-weight: 700;
   line-height: 1.2;
   color: #1a3a16;
   margin: 0 0 1.5rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
 .sobre-p {
@@ -530,18 +532,18 @@ export default {
 
 .numero-big {
   font-size: clamp(2.5rem, 5vw, 4rem);
-  font-weight: 400;
+  font-weight: 800;
   color: #f07030;
   line-height: 1;
-  font-style: italic;
+  letter-spacing: -0.03em;
 }
 
 .numero-label {
-  font-family: 'Courier New', monospace;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(245, 242, 236, 0.75);
+  font-weight: 600;
+  color: rgba(245, 242, 236, 0.65);
   text-align: center;
 }
 
@@ -565,10 +567,10 @@ export default {
 
 .atividades-titulo {
   font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 400;
+  font-weight: 700;
   color: #1a3a16;
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 .carrossel {
@@ -623,16 +625,16 @@ export default {
 }
 
 .card-num {
-  font-family: 'Courier New', monospace;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   color: #d95f1c;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .card-titulo {
-  font-size: 1.15rem;
-  font-weight: 400;
+  font-size: 1.05rem;
+  font-weight: 600;
   color: #1a3a16;
   margin: 0;
   line-height: 1.35;
@@ -647,10 +649,10 @@ export default {
 }
 
 .card-data {
-  font-family: 'Courier New', monospace;
   font-size: 0.78rem;
+  font-weight: 600;
   color: #d95f1c;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
 }
 
 .sem-ativ {
@@ -675,10 +677,10 @@ export default {
 
 .regioes-titulo {
   font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 400;
+  font-weight: 700;
   color: #1a3a16;
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   line-height: 1.2;
 }
 
@@ -747,10 +749,9 @@ export default {
 }
 
 .estado-nome {
-  font-size: 1.1rem;
-  font-weight: 400;
+  font-size: 1rem;
+  font-weight: 600;
   color: #1a3a16;
-  letter-spacing: -0.01em;
 }
 
 .estado-card.aberto .estado-nome {
@@ -778,11 +779,10 @@ export default {
 }
 
 .estado-coord {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #d95f1c;
-  font-family: 'Courier New', monospace;
+  font-weight: 600;
   margin: 0;
-  letter-spacing: 0.04em;
 }
 
 /* ── FINANCIADORES ──────────────────────────────────── */
@@ -799,11 +799,11 @@ export default {
 }
 
 .financiadores-titulo {
-  font-size: 1.8rem;
-  font-weight: 400;
+  font-size: 1.5rem;
+  font-weight: 700;
   color: #1a3a16;
   margin: 0 0 2.5rem;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 .logos-financiadores {
@@ -886,10 +886,10 @@ export default {
 }
 
 .rodape-copy {
-  font-family: 'Courier New', monospace;
   font-size: 0.78rem;
-  color: rgba(245, 242, 236, 0.45);
-  letter-spacing: 0.06em;
+  font-weight: 500;
+  color: rgba(245, 242, 236, 0.4);
+  letter-spacing: 0.03em;
   margin: 0;
 }
 

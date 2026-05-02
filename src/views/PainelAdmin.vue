@@ -1,29 +1,13 @@
 <template>
-  <div class="admin-wrapper">
-    <!-- HEADER -->
-    <header class="admin-header">
-      <div class="admin-header-content">
-        <div class="header-titulo">
-          <svg class="icon-header" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 3v1m0 16v1m9-9h-1m-16 0H1M20.485 3.515l-.707.707M5.222 18.778l-.707.707M20.485 20.485l-.707-.707M5.222 5.222l-.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-          </svg>
-          <div>
-            <h1>Painel Administrativo</h1>
-            <p>Meninas Oyá</p>
-          </div>
-        </div>
-        <button @click="logout" class="btn-logout">
-          <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"/>
-            <polyline points="16 11 12 15 8 11"/>
-            <line x1="12" y1="4" x2="12" y2="15"/>
-          </svg>
-          Sair
-        </button>
-      </div>
-    </header>
- 
+  <PainelShell titulo="Painel Administrativo" @logout="logout">
+    <template #icon>
+      <svg class="icon-header" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 3v1m0 16v1m9-9h-1m-16 0H1M20.485 3.515l-.707.707M5.222 18.778l-.707.707M20.485 20.485l-.707-.707M5.222 5.222l-.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+      </svg>
+    </template>
+
     <!-- ABAS -->
+    <template #tabs>
     <div class="abas">
       <button
         v-for="aba in abas"
@@ -32,6 +16,10 @@
         :class="['btn-aba', { ativo: abaAtiva === aba.key }]"
       >
         <svg class="icon-aba" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <g v-if="aba.key === 'pendentes'">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </g>
           <g v-if="aba.key === 'atividades'">
             <rect x="3" y="3" width="18" height="18" rx="2"/>
             <path d="M9 11h6M9 15h6"/>
@@ -50,9 +38,78 @@
         {{ aba.label }}
       </button>
     </div>
- 
-    <main class="admin-main">
- 
+    </template>
+
+      <!-- ======= ABA PENDENTES ======= -->
+      <div v-if="abaAtiva === 'pendentes'">
+        <div class="secao-card">
+          <div class="secao-header">
+            <svg class="icon-secao" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <h2 class="secao-titulo">Professores aguardando aprovação</h2>
+            <span v-if="pendentes.length" class="badge-count">{{ pendentes.length }}</span>
+          </div>
+
+          <div v-if="pendentes.length === 0" class="vazio">
+            <svg class="icon-vazio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Nenhum cadastro pendente.
+          </div>
+
+          <div v-else class="pendentes-lista">
+            <div v-for="p in pendentes" :key="p.id" class="pendente-card">
+              <!-- Linha principal -->
+              <div class="pendente-info">
+                <div class="pendente-avatar">{{ p.nome?.[0]?.toUpperCase() ?? '?' }}</div>
+                <div class="pendente-dados">
+                  <p class="pendente-nome">{{ p.nome }}</p>
+                  <p class="pendente-email">{{ p.email }}</p>
+                </div>
+              </div>
+
+              <!-- Chips de metadados -->
+              <div class="pendente-meta">
+                <span class="meta-chip">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  {{ formatCpf(p.cpf) }}
+                </span>
+                <span class="meta-chip">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  {{ p.uf }}
+                </span>
+                <span class="meta-chip">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                  {{ p.escola }}
+                </span>
+                <span v-if="p.idade" class="meta-chip">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+                  {{ p.idade }} anos
+                </span>
+                <a v-if="p.linkCurriculoLattes" :href="p.linkCurriculoLattes" target="_blank" rel="noopener" class="meta-chip meta-chip--link">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                  Lattes
+                </a>
+              </div>
+
+              <!-- Ações -->
+              <div class="pendente-acoes">
+                <button @click="aprovarProfessor(p.id)" class="btn-aprovar">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Aprovar
+                </button>
+                <button @click="rejeitarProfessor(p.id)" class="btn-rejeitar">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  Rejeitar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- ======= ABA ATIVIDADES ======= -->
       <div v-if="abaAtiva === 'atividades'">
         <div class="secao-card">
@@ -208,65 +265,6 @@
         <div class="secao-card">
           <div class="secao-header">
             <svg class="icon-secao" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="5" x2="12" y2="19"/>
-              <line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-            <h2 class="secao-titulo">Cadastrar Professor</h2>
-          </div>
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Email</label>
-              <input v-model="professor.email" type="email" placeholder="email@exemplo.com" class="form-input" />
-            </div>
-            <div class="form-group">
-              <label>Senha</label>
-              <input v-model="professor.senha" type="password" placeholder="Minimo 8 caracteres" class="form-input" />
-            </div>
-            <div class="form-group">
-              <label>Nome</label>
-              <input v-model="professor.nome" type="text" placeholder="Nome completo" class="form-input" />
-            </div>
-            <div class="form-group">
-              <label>Idade</label>
-              <input v-model="professor.idade" type="number" placeholder="Idade" class="form-input" />
-            </div>
-            <div class="form-group">
-              <label>UF</label>
-              <select v-model="professor.uf" class="form-input">
-                <option value="">Selecione o estado</option>
-                <option value="MA">Maranhao</option>
-                <option value="SP">Sao Paulo</option>
-                <option value="CE">Ceara</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Escola</label>
-              <input v-model="professor.escola" type="text" placeholder="Nome da escola" class="form-input" />
-            </div>
-            <div class="form-group full">
-              <label>Link do Lattes</label>
-              <input v-model="professor.linkCurriculoLattes" type="url" placeholder="https://lattes.cnpq.br/..." class="form-input" />
-            </div>
-          </div>
-          <button @click="salvarProfessor" class="btn-salvar">
-            <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"/>
-              <polyline points="17 6 12 13 7 8"/>
-            </svg>
-            Cadastrar Professor
-          </button>
-          <div v-if="sucessoProfessor" class="sucesso-msg">
-            <svg class="icon-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-            Professor cadastrado com sucesso!
-          </div>
-        </div>
- 
-        <!-- LISTA PROFESSORES -->
-        <div class="secao-card">
-          <div class="secao-header">
-            <svg class="icon-secao" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
               <circle cx="9" cy="7" r="4"/>
               <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
@@ -286,10 +284,10 @@
               <tr>
                 <th>Email</th>
                 <th>Nome</th>
-                <th>Idade</th>
+                <th>CPF</th>
                 <th>UF</th>
                 <th>Escola</th>
-                <th>Lattes</th>
+                <th>Status</th>
                 <th>Ações</th>
               </tr>
             </thead>
@@ -297,25 +295,27 @@
               <tr v-for="p in professores" :key="p.id">
                 <td>{{ p.email }}</td>
                 <td>{{ p.nome }}</td>
-                <td>{{ p.idade }}</td>
+                <td>{{ p.cpf }}</td>
                 <td>{{ p.uf }}</td>
                 <td>{{ p.escola }}</td>
-                <td>
-                  <a :href="p.linkCurriculoLattes" target="_blank" class="link-lattes">
-                    <svg class="icon-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                <td><span :class="['badge-status', p.status?.toLowerCase()]">{{ p.status }}</span></td>
+                <td class="acoes">
+                  <button @click="abrirEditar(p)" class="btn-acao btn-editar" title="Editar">
+                    <svg class="icon-delete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                     </svg>
-                    Ver
-                  </a>
-                </td>
-                <td>
+                  </button>
+                  <button @click="abrirResetSenha(p)" class="btn-acao btn-senha" title="Resetar senha">
+                    <svg class="icon-delete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                  </button>
                   <button @click="deletarProfessor(p.id)" class="btn-apagar" title="Apagar">
                     <svg class="icon-delete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="3 6 5 6 21 6"/>
                       <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                      <line x1="10" y1="11" x2="10" y2="17"/>
-                      <line x1="14" y1="11" x2="14" y2="17"/>
                     </svg>
                   </button>
                 </td>
@@ -324,33 +324,131 @@
           </table>
         </div>
       </div>
+
+      <!-- MODAL EDITAR PROFESSOR -->
+      <div v-if="modalEdicao" class="modal-overlay" @click.self="modalEdicao = false">
+        <div class="modal-card">
+          <div class="modal-header">
+            <h3>Editar Professor</h3>
+            <button @click="modalEdicao = false" class="modal-fechar">&times;</button>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nome</label>
+              <input v-model="editando.nome" type="text" class="form-input" />
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input v-model="editando.email" type="email" class="form-input" />
+            </div>
+            <div class="form-group">
+              <label>Idade</label>
+              <input v-model="editando.idade" type="number" class="form-input" />
+            </div>
+            <div class="form-group">
+              <label>UF</label>
+              <select v-model="editando.uf" class="form-input">
+                <option value="">Selecione</option>
+                <option v-for="uf in ufs" :key="uf" :value="uf">{{ uf }}</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Escola</label>
+              <input v-model="editando.escola" type="text" class="form-input" />
+            </div>
+            <div class="form-group full">
+              <label>Link do Lattes</label>
+              <input v-model="editando.linkCurriculoLattes" type="url" class="form-input" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button @click="salvarEdicao" class="btn-salvar">Salvar</button>
+            <button @click="modalEdicao = false" class="btn-cancelar">Cancelar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL RESET SENHA -->
+      <div v-if="modalSenha" class="modal-overlay" @click.self="modalSenha = false">
+        <div class="modal-card modal-card--sm">
+          <div class="modal-header">
+            <h3>Resetar Senha</h3>
+            <button @click="modalSenha = false" class="modal-fechar">&times;</button>
+          </div>
+          <p class="modal-subtitulo">Professor: <strong>{{ resetando.nome }}</strong></p>
+          <div class="form-group">
+            <label>Nova senha</label>
+            <input v-model="resetando.novaSenha" type="password" placeholder="Mínimo 8 caracteres" class="form-input" />
+          </div>
+          <div class="modal-footer">
+            <button @click="confirmarResetSenha" class="btn-salvar">Confirmar</button>
+            <button @click="modalSenha = false" class="btn-cancelar">Cancelar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL CONFIRMAÇÃO GENÉRICO -->
+      <div v-if="confirmModal.show" class="modal-overlay" @click.self="confirmModal.show = false">
+        <div class="modal-card modal-card--sm modal-confirm">
+          <div class="confirm-icon" :class="confirmModal.variante">
+            <svg v-if="confirmModal.variante === 'danger'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            <svg v-else-if="confirmModal.variante === 'success'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <h3 class="confirm-titulo">{{ confirmModal.titulo }}</h3>
+          <p class="confirm-mensagem">{{ confirmModal.mensagem }}</p>
+          <div class="modal-footer">
+            <button @click="confirmModal.show = false" class="btn-cancelar">Cancelar</button>
+            <button @click="executarConfirm" :class="['btn-confirm', confirmModal.variante]">{{ confirmModal.labelOk }}</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOAST -->
+      <transition name="toast-fade">
+        <div v-if="toast.show" :class="['toast', toast.variante]">
+          <svg v-if="toast.variante === 'sucesso'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+          {{ toast.mensagem }}
+        </div>
+      </transition>
  
       
  
  
  
-          <!-- ✅ MENSAGEM DE ERRO AGORA APARECE -->
-    </main>
-  </div>
+  </PainelShell>
 </template>
 
 <script>
+import PainelShell from '@/components/PainelShell.vue'
+
 const API = "http://localhost:8080"
 
 export default {
+  components: { PainelShell },
   data() {
     return {
-      abaAtiva: 'atividades',
+      abaAtiva: 'pendentes',
       abas: [
+        { key: 'pendentes', label: 'Pendentes' },
         { key: 'atividades', label: 'Atividades' },
         { key: 'alunos', label: 'Alunos' },
         { key: 'professores', label: 'Professores' }
       ],
       atividade: { titulo: '', data: '', descricao: '', foto: null },
       aluno: { nome: '', idade: '', uf: '', escola: '' },
-      professor: { email: '', senha: '', nome: '', idade: '', uf: '', escola: '', linkCurriculoLattes: '' },
+      professor: { email: '', cpf: '', senha: '', nome: '', idade: '', uf: '', escola: '', linkCurriculoLattes: '' },
+      editando: { id: null, email: '', nome: '', idade: '', uf: '', escola: '', linkCurriculoLattes: '' },
+      resetando: { id: null, nome: '', novaSenha: '' },
+      modalEdicao: false,
+      modalSenha: false,
+      confirmModal: { show: false, titulo: '', mensagem: '', variante: 'warning', labelOk: 'Confirmar', _resolve: null },
+      toast: { show: false, mensagem: '', variante: 'sucesso' },
+      ufs: ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'],
       alunos: [],
       professores: [],
+      pendentes: [],
       sucessoAtividade: false,
       sucessoAluno: false,
       sucessoProfessor: false
@@ -364,11 +462,35 @@ export default {
     }
     this.carregarAlunos()
     this.carregarProfessores()
+    this.carregarPendentes()
   },
 
   methods: {
     token() {
       return localStorage.getItem("token")
+    },
+
+    formatCpf(cpf) {
+      if (!cpf) return '—'
+      const d = cpf.replace(/\D/g, '')
+      if (d.length !== 11) return cpf
+      return d.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+    },
+
+    mostrarToast(mensagem, variante = 'sucesso') {
+      this.toast = { show: true, mensagem, variante }
+      setTimeout(() => { this.toast.show = false }, 3500)
+    },
+
+    abrirConfirm({ titulo, mensagem, variante = 'warning', labelOk = 'Confirmar' }) {
+      return new Promise(resolve => {
+        this.confirmModal = { show: true, titulo, mensagem, variante, labelOk, _resolve: resolve }
+      })
+    },
+
+    executarConfirm() {
+      this.confirmModal.show = false
+      if (this.confirmModal._resolve) this.confirmModal._resolve(true)
     },
 
     // ATIVIDADES
@@ -431,16 +553,73 @@ export default {
     },
 
     async deletarAluno(id) {
-      if (!confirm("Apagar este aluno?")) return
+      const ok = await this.abrirConfirm({
+        titulo: 'Apagar aluno?',
+        mensagem: 'Esta ação não pode ser desfeita.',
+        variante: 'danger',
+        labelOk: 'Apagar'
+      })
+      if (!ok) return
       try {
         await fetch(`${API}/api/alunos/${id}`, {
           method: "DELETE",
           headers: { "Authorization": `Bearer ${this.token()}` }
         })
         this.alunos = this.alunos.filter(a => a.id !== id)
+        this.mostrarToast('Aluno removido com sucesso.')
       } catch (e) {
-        alert("Erro ao apagar: " + e.message)
+        this.mostrarToast('Erro ao apagar: ' + e.message, 'erro')
       }
+    },
+
+    // PENDENTES (professores aguardando aprovacao)
+    async carregarPendentes() {
+      try {
+        const response = await fetch(`${API}/api/professores/pendentes`, {
+          headers: { "Authorization": `Bearer ${this.token()}` }
+        })
+        if (!response.ok) return
+        this.pendentes = await response.json()
+      } catch (e) { console.error(e) }
+    },
+
+    async aprovarProfessor(id) {
+      const ok = await this.abrirConfirm({
+        titulo: 'Aprovar professor?',
+        mensagem: 'O professor poderá fazer login após a aprovação.',
+        variante: 'success',
+        labelOk: 'Aprovar'
+      })
+      if (!ok) return
+      try {
+        const response = await fetch(`${API}/api/professores/${id}/aprovar`, {
+          method: "PUT",
+          headers: { "Authorization": `Bearer ${this.token()}` }
+        })
+        if (!response.ok) throw new Error(await response.text())
+        this.pendentes = this.pendentes.filter(p => p.id !== id)
+        await this.carregarProfessores()
+        this.mostrarToast('Professor aprovado com sucesso!')
+      } catch (e) { this.mostrarToast('Erro ao aprovar: ' + e.message, 'erro') }
+    },
+
+    async rejeitarProfessor(id) {
+      const ok = await this.abrirConfirm({
+        titulo: 'Rejeitar cadastro?',
+        mensagem: 'O professor não poderá fazer login no sistema.',
+        variante: 'danger',
+        labelOk: 'Rejeitar'
+      })
+      if (!ok) return
+      try {
+        const response = await fetch(`${API}/api/professores/${id}/rejeitar`, {
+          method: "PUT",
+          headers: { "Authorization": `Bearer ${this.token()}` }
+        })
+        if (!response.ok) throw new Error(await response.text())
+        this.pendentes = this.pendentes.filter(p => p.id !== id)
+        this.mostrarToast('Cadastro rejeitado.')
+      } catch (e) { this.mostrarToast('Erro ao rejeitar: ' + e.message, 'erro') }
     },
 
     // PROFESSORES
@@ -454,40 +633,85 @@ export default {
       } catch (e) { console.error(e) }
     },
 
-    async salvarProfessor() {
+    abrirEditar(p) {
+      this.editando = {
+        id: p.id,
+        email: p.email,
+        nome: p.nome,
+        idade: p.idade,
+        uf: p.uf,
+        escola: p.escola,
+        linkCurriculoLattes: p.linkCurriculoLattes
+      }
+      this.modalEdicao = true
+    },
+
+    async salvarEdicao() {
       try {
-        const response = await fetch(`${API}/api/professores`, {
-          method: "POST",
+        const body = {
+          email: this.editando.email,
+          nome: this.editando.nome,
+          idade: parseInt(this.editando.idade),
+          uf: this.editando.uf,
+          escola: this.editando.escola,
+          linkCurriculoLattes: this.editando.linkCurriculoLattes
+        }
+        const response = await fetch(`${API}/api/professores/${this.editando.id}`, {
+          method: 'PUT',
           headers: {
-            "Authorization": `Bearer ${this.token()}`,
-            "Content-Type": "application/json"
+            'Authorization': `Bearer ${this.token()}`,
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            ...this.professor,
-            idade: parseInt(this.professor.idade)
-          })
+          body: JSON.stringify(body)
         })
         if (!response.ok) throw new Error(await response.text())
-
-        this.sucessoProfessor = true
-        setTimeout(() => { this.sucessoProfessor = false }, 3000)
-        this.professor = { email: '', senha: '', nome: '', idade: '', uf: '', escola: '', linkCurriculoLattes: '' }
+        this.modalEdicao = false
         await this.carregarProfessores()
-      } catch (e) {
-        alert("Erro: " + e.message)
+      } catch (e) { alert('Erro ao salvar: ' + e.message) }
+    },
+
+    abrirResetSenha(p) {
+      this.resetando = { id: p.id, nome: p.nome, novaSenha: '' }
+      this.modalSenha = true
+    },
+
+    async confirmarResetSenha() {
+      if (this.resetando.novaSenha.length < 8) {
+        alert('A senha deve ter pelo menos 8 caracteres.')
+        return
       }
+      try {
+        const response = await fetch(`${API}/api/professores/${this.resetando.id}/reset-senha`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${this.token()}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ novaSenha: this.resetando.novaSenha })
+        })
+        if (!response.ok) throw new Error(await response.text())
+        this.modalSenha = false
+        this.mostrarToast(`Senha de ${this.resetando.nome} redefinida!`)
+      } catch (e) { this.mostrarToast('Erro ao resetar senha: ' + e.message, 'erro') }
     },
 
     async deletarProfessor(id) {
-      if (!confirm("Apagar este professor?")) return
+      const ok = await this.abrirConfirm({
+        titulo: 'Apagar professor?',
+        mensagem: 'Todos os dados deste professor serão removidos permanentemente.',
+        variante: 'danger',
+        labelOk: 'Apagar'
+      })
+      if (!ok) return
       try {
         await fetch(`${API}/api/professores/${id}`, {
           method: "DELETE",
           headers: { "Authorization": `Bearer ${this.token()}` }
         })
         this.professores = this.professores.filter(p => p.id !== id)
+        this.mostrarToast('Professor removido.')
       } catch (e) {
-        alert("Erro ao apagar: " + e.message)
+        this.mostrarToast('Erro ao apagar: ' + e.message, 'erro')
       }
     },
 
@@ -502,77 +726,9 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+/* Estilos locais — wrapper/header/logout ficam no PainelShell */
+.icon-header { width: 2rem; height: 2rem; color: #f07030; }
 
-
-/* ── RESET ───────────────────────────────────────────── */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: #fdfcfa;
-  color: #1a1a18;
-  -webkit-font-smoothing: antialiased;
-}
-
-img {
-  max-width: 100%;
-  display: block;
-}
-
-a {
-  text-decoration: none;
-}
-
-.admin-wrapper {
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(240, 112, 48, 0.14), transparent 30%),
-    linear-gradient(180deg, #fff7f1 0%, #f7fbf5 100%);
-  color: #1a1a18;
-}
-
-.admin-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: rgba(26, 58, 22, 0.96);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.admin-header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1.4rem 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.header-titulo {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-}
-
-.header-titulo h1 {
-  color: #fff8f1;
-  font-size: clamp(1.35rem, 2vw, 2rem);
-  margin-bottom: 0.15rem;
-}
-
-.header-titulo p {
-  color: rgba(255, 248, 241, 0.7);
-  font-size: 0.9rem;
-}
-
-.icon-header,
 .icon-btn,
 .icon-aba,
 .icon-secao,
@@ -584,32 +740,6 @@ a {
   width: 1.15rem;
   height: 1.15rem;
   flex-shrink: 0;
-}
-
-.icon-header {
-  width: 2rem;
-  height: 2rem;
-  color: #f07030;
-}
-
-.btn-logout {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff8f1;
-  padding: 0.8rem 1.1rem;
-  border-radius: 999px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.btn-logout:hover {
-  background: rgba(240, 112, 48, 0.18);
-  border-color: rgba(240, 112, 48, 0.35);
 }
 
 .abas {
@@ -646,14 +776,6 @@ a {
   color: #fff;
   border-color: transparent;
   box-shadow: 0 14px 30px rgba(217, 95, 28, 0.22);
-}
-
-.admin-main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1.5rem;
-  display: grid;
-  gap: 1.5rem;
 }
 
 .secao-card {
@@ -851,9 +973,113 @@ a {
   transition: 0.2s ease;
 }
 
-.btn-apagar:hover {
-  background: #ffe4d8;
+.btn-apagar:hover { background: #ffe4d8; }
+
+.acoes { display: flex; gap: 0.4rem; align-items: center; }
+
+.btn-acao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
+
+.btn-editar { background: #eef5ec; color: #2d5a27; }
+.btn-editar:hover { background: #d8eed3; }
+.btn-senha { background: #fffbe6; color: #a06800; }
+.btn-senha:hover { background: #fff3b0; }
+
+.badge-status {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.badge-status.aprovado { background: #e8f5e4; color: #2d5a27; }
+.badge-status.pendente { background: #fff8e1; color: #a06800; }
+.badge-status.rejeitado { background: #fdecea; color: #b71c1c; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 20, 8, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-card {
+  background: #fff;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  width: 100%;
+  max-width: 640px;
+  box-shadow: 0 24px 60px rgba(26, 58, 22, 0.18);
+}
+
+.modal-card--sm { max-width: 420px; }
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.modal-header h3 {
+  font-size: 1.2rem;
+  color: #1a3a16;
+}
+
+.modal-fechar {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #888;
+  cursor: pointer;
+  padding: 0 0.25rem;
+}
+
+.modal-fechar:hover { color: #c95420; }
+
+.modal-subtitulo {
+  margin-bottom: 1rem;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  justify-content: flex-end;
+}
+
+.btn-cancelar {
+  padding: 0.85rem 1.25rem;
+  border: 1px solid rgba(45, 90, 39, 0.15);
+  border-radius: 999px;
+  background: #fff;
+  color: #555;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+  font-family: inherit;
+}
+
+.btn-cancelar:hover { background: #f3f3f1; }
 
 .link-lattes {
   display: inline-flex;
@@ -865,6 +1091,244 @@ a {
 
 .link-lattes:hover {
   text-decoration: underline;
+}
+
+/* ── MODAL CONFIRMⅠÇÃO ───────────────────────────── */
+.modal-confirm { text-align: center; padding: 2.25rem 2rem; }
+
+.confirm-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 1.25rem;
+}
+
+.confirm-icon svg { width: 1.5rem; height: 1.5rem; }
+
+.confirm-icon.danger  { background: #fdecea; color: #c62828; }
+.confirm-icon.success { background: #e8f5e4; color: #2d5a27; }
+.confirm-icon.warning { background: #fff8e1; color: #a06800; }
+
+.confirm-titulo {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1a3a16;
+  margin: 0 0 0.5rem;
+}
+
+.confirm-mensagem {
+  font-size: 0.9rem;
+  color: #6a5f58;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.btn-confirm {
+  padding: 0.85rem 1.5rem;
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+  font-family: inherit;
+}
+
+.btn-confirm.danger  { background: linear-gradient(135deg, #c62828, #e53935); color: #fff; }
+.btn-confirm.success { background: linear-gradient(135deg, #1a3a16, #2d5a27); color: #fff; }
+.btn-confirm.warning { background: linear-gradient(135deg, #d95f1c, #f07030); color: #fff; }
+.btn-confirm:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+
+/* ── TOAST ───────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  z-index: 999;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.15);
+  white-space: nowrap;
+}
+
+.toast svg { width: 1rem; height: 1rem; flex-shrink: 0; }
+.toast.sucesso { background: #1a3a16; color: #d4f0cc; }
+.toast.erro    { background: #c62828; color: #fde8e8; }
+
+.toast-fade-enter-active, .toast-fade-leave-active { transition: opacity 0.3s ease, transform 0.3s ease; }
+.toast-fade-enter-from, .toast-fade-leave-to { opacity: 0; transform: translateX(-50%) translateY(12px); }
+
+/* ── PENDENTES (cards) ──────────────────────────────── */
+.badge-count {
+  margin-left: auto;
+  min-width: 1.6rem;
+  height: 1.6rem;
+  padding: 0 0.45rem;
+  background: linear-gradient(135deg, #d95f1c, #f07030);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pendentes-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pendente-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid rgba(45, 90, 39, 0.1);
+  border-radius: 1.1rem;
+  background: #fdfcfa;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  flex-wrap: wrap;
+}
+
+.pendente-card:hover {
+  border-color: rgba(217, 95, 28, 0.2);
+  box-shadow: 0 6px 20px rgba(217, 95, 28, 0.08);
+}
+
+.pendente-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 0 0 220px;
+  min-width: 0;
+}
+
+.pendente-avatar {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2d5a27, #1a3a16);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.pendente-dados { min-width: 0; }
+
+.pendente-nome {
+  font-weight: 700;
+  color: #1a3a16;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.pendente-email {
+  font-size: 0.82rem;
+  color: #6a5f58;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.pendente-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  flex: 1;
+}
+
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.65rem;
+  background: #f3f0ec;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: #4a4540;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.meta-chip svg { width: 0.85rem; height: 0.85rem; flex-shrink: 0; }
+
+.meta-chip--link {
+  background: #fff4ec;
+  color: #c95420;
+  font-weight: 600;
+}
+
+.meta-chip--link:hover {
+  background: #ffe8d8;
+  text-decoration: underline;
+}
+
+.pendente-acoes {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.btn-aprovar,
+.btn-rejeitar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  border: none;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+  font-family: inherit;
+}
+
+.btn-aprovar svg,
+.btn-rejeitar svg { width: 0.9rem; height: 0.9rem; flex-shrink: 0; }
+
+.btn-aprovar {
+  background: linear-gradient(135deg, #1a3a16, #2d5a27);
+  color: #fff;
+}
+
+.btn-aprovar:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(26, 58, 22, 0.18);
+}
+
+.btn-rejeitar {
+  background: #fff1ec;
+  color: #c95420;
+}
+
+.btn-rejeitar:hover {
+  background: #ffe4d8;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+  .pendente-card { flex-direction: column; align-items: flex-start; }
+  .pendente-info { flex: unset; width: 100%; }
+  .pendente-acoes { width: 100%; }
+  .btn-aprovar, .btn-rejeitar { flex: 1; justify-content: center; }
 }
 
 /* ── PAINEL ADMIN ────────────────────────────────────── */
@@ -1134,15 +1598,13 @@ a {
 }
 
 @media (max-width: 640px) {
-  .abas,
-  .admin-main {
+  .abas {
     padding-left: 1rem;
     padding-right: 1rem;
   }
 
   .btn-aba,
-  .btn-salvar,
-  .btn-logout {
+  .btn-salvar {
     width: 100%;
     justify-content: center;
   }

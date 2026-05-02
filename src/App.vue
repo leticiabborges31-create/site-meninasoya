@@ -14,7 +14,7 @@
         <router-link to="/atividades">Atividades</router-link>
         <router-link to="/coordenacao">Coordenação</router-link>
         <router-link to="/parceria">Parceria</router-link>
-        <router-link to="/admin" class="menu-cta">Administração</router-link>
+        <router-link :to="rotaAdministracao" class="menu-cta">Administração</router-link>
       </nav>
     </header>
 
@@ -24,17 +24,45 @@
 
 <script>
 export default {
-  mounted() {
-    this.rolarParaHash(this.$route.hash);
-  },
-
-  watch: {
-    '$route.hash'(hash) {
-      this.$nextTick(() => this.rolarParaHash(hash));
+  data() {
+    return {
+      logado: false,
+      isAdmin: false
     }
   },
 
+  computed: {
+    rotaAdministracao() {
+      if (!this.logado) return '/admin'
+      return this.isAdmin ? '/painel-admin' : '/painel'
+    }
+  },
+
+  watch: {
+    '$route'() {
+      this.atualizarAuth()
+    }
+  },
+
+  mounted() {
+    this.atualizarAuth()
+    this.rolarParaHash(this.$route.hash)
+  },
+
   methods: {
+    atualizarAuth() {
+      this.logado = localStorage.getItem('logado') === 'true'
+      if (!this.logado) { this.isAdmin = false; return }
+      try {
+        const token = localStorage.getItem('token')
+        const payload = JSON.parse(atob(token.split('.')[1]))
+        const authorities = payload.authorities || payload.scope || ''
+        this.isAdmin = String(authorities).includes('ADMIN')
+      } catch {
+        this.isAdmin = false
+      }
+    },
+
     navegarPara(id) {
       if (this.$route.path !== '/') {
         this.$router.push({ path: '/', hash: `#${id}` });
@@ -70,10 +98,10 @@ export default {
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  padding: 1rem 4.5rem;
-  background: rgba(255, 243, 231, 0.9);
-  backdrop-filter: blur(18px);
-  border-bottom: 1px solid rgba(121, 76, 42, 0.12);
+  padding: 0.55rem 3.5rem;
+  background: rgba(255, 243, 231, 0.88);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(121, 76, 42, 0.1);
 }
 
 .brand {
@@ -87,9 +115,9 @@ export default {
 .brand-mark {
   display: grid;
   place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 0.95rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.75rem;
   background: linear-gradient(135deg, #ff8a3d, #c84f1d);
   color: #fff9f4;
   font-weight: 700;
@@ -103,13 +131,13 @@ export default {
 }
 
 .brand-copy strong {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 700;
 }
 
 .brand-copy span {
   color: #736152;
-  font-size: 0.82rem;
+  font-size: 0.75rem;
 }
 
 .menu {
@@ -120,20 +148,19 @@ export default {
 }
 
 .menu a {
-  padding: 0.72rem 1rem;
+  padding: 0.5rem 0.85rem;
   border-radius: 999px;
   color: #3f3228;
   text-decoration: none;
-  font-size: 0.95rem;
+  font-size: 0.875rem;
   font-weight: 600;
-  transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .menu a:hover,
 .menu a.router-link-active {
   background: rgba(200, 79, 29, 0.1);
   color: #b2481f;
-  transform: translateY(-1px);
 }
 
 .menu-cta {

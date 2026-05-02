@@ -5,24 +5,26 @@
       <div class="login-header">
         <div class="login-logo">MO</div>
         <h1 class="login-titulo">Meninas Oyá</h1>
-        <p class="login-subtitulo">Painel Administrativo</p>
+        <p class="login-subtitulo">Acesso ao Painel</p>
       </div>
 
       <!-- FORMULÁRIO -->
       <form @submit.prevent="login" class="login-form">
+        <div v-if="erro" class="erro-msg">{{ erro }}</div>
+
         <div class="form-group">
-          <label class="form-label">Username</label>
+          <label class="form-label">Email ou usuário</label>
           <input 
             v-model="loginUsername" 
             type="text"
-            placeholder="seu_usuario"
+            placeholder="seu@email.com ou ADMIN"
             class="form-input"
             required
           />
         </div>
 
         <div class="form-group">
-          <label class="form-label">password</label>
+          <label class="form-label">Senha</label>
           <input 
             v-model="loginpassword" 
             type="password" 
@@ -53,57 +55,52 @@ export default {
   data() {
     return {
       loginUsername: '',
-      loginpassword: ''
+      loginpassword: '',
+      erro: ''
     }
   },
 
   methods: {
     async login() {
+      this.erro = ''
       try {
-        console.log("Tentando login...")
-
         const response = await fetch("http://localhost:8080/auth", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            username: this.loginUsername,
+            username: this.loginUsername.trim().toLowerCase(),
             password: this.loginpassword
           })
         })
 
-        // Se login falhar
         if (!response.ok) {
-          alert("Usuário ou password inválidos")
+          const body = await response.json().catch(() => ({}))
+          if (response.status === 403) {
+            this.erro = body.message || 'Cadastro pendente ou rejeitado. Aguarde a aprovação.'
+          } else {
+            this.erro = 'Email ou senha inválidos.'
+          }
           return
         }
 
         const data = await response.json()
-
-        console.log("Resposta do backend:", data)
-
-        // ✅ salva o token JWT
-        localStorage.setItem("token", data.accesstoken)
-
-
-        // opcional: salvar status do login
+        const token = data.accessToken || data.accesstoken
+        localStorage.setItem("token", token)
         localStorage.setItem("logado", "true")
+        localStorage.setItem("usuario", JSON.stringify({ username: this.loginUsername }))
 
-        // opcional: salvar dados do usuário
-        localStorage.setItem("usuario", JSON.stringify({
-          username: this.loginUsername
-        }))
-
-        console.log("Token salvo com sucesso")
-
-        // redireciona
-        this.$router.push("/painel-admin")
-
+        // Decodifica o JWT para descobrir a role
+        const payload = JSON.parse(atob(token.split('.')[1]))
+        const authorities = payload.authorities || ''
+        if (authorities.includes('ADMIN')) {
+          this.$router.push('/painel-admin')
+        } else {
+          this.$router.push('/painel')
+        }
 
       } catch (error) {
         console.error("Erro no login:", error)
-        alert("Erro ao conectar com o servidor")
+        this.erro = 'Erro ao conectar com o servidor.'
       }
     }
   }
@@ -124,7 +121,6 @@ export default {
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   position: relative;
   overflow: hidden;
-  font-family: 'Poppins', sans-serif;
 }
 
 .login-decor {
@@ -228,7 +224,7 @@ export default {
   border: 2px solid #e8e8e8;
   border-radius: 10px;
   font-size: 16px;
-  font-family: 'Poppins', sans-serif;
+  font-family: inherit;
   transition: all 0.3s ease;
   background: #fafafa;
 }
@@ -242,6 +238,16 @@ export default {
 
 .form-input::placeholder {
   color: #ccc;
+}
+
+.erro-msg {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
 }
 
 /* BOTÃO LOGIN */
