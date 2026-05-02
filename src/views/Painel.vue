@@ -1,103 +1,76 @@
 <template>
-  <div class="painel-wrapper">
-    <!-- HEADER -->
-    <header class="painel-header">
-      <div class="painel-header-content">
-        <div class="header-titulo">
-          <span class="header-icone">📊</span>
-          <div>
-            <h1>Painel Administrativo</h1>
-            <p>{{ editando ? "Editar Atividade" : "Adicionar Nova Atividade" }}</p>
-          </div>
-        </div>
-        <button @click="logout" class="btn-logout">
-          <span>🚪</span> Sair
-        </button>
+  <PainelShell titulo="Painel do Professor" @logout="logout">
+    <template #icon>
+      <svg class="icon-header" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+    </template>
+
+    <div class="secao-card">
+      <div class="secao-header">
+        <svg class="icon-secao" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        <h2 class="secao-titulo">{{ editando ? 'Editar Atividade' : 'Nova Atividade' }}</h2>
       </div>
-    </header>
 
-    <!-- CONTAINER PRINCIPAL -->
-    <main class="painel-main">
-      <div class="painel-card">
-        <form @submit.prevent="publicar" class="painel-formulario">
-
-          <!-- CAMPO TÍTULO -->
+      <form @submit.prevent="publicar">
+        <div class="form-grid">
           <div class="form-group">
-            <label class="form-label">Título da Atividade</label>
-            <input
-              v-model="titulo"
-              type="text"
-              placeholder="Ex: Workshop de Programação"
-              class="form-input"
-              required
-            />
+            <label>Título</label>
+            <input v-model="titulo" type="text" placeholder="Título da atividade" class="form-input" required />
           </div>
-
-          <!-- CAMPO DATA -->
           <div class="form-group">
-            <label class="form-label">Data</label>
-            <input
-              v-model="dataNoticia"
-              type="date"
-              class="form-input"
-              required
-            />
+            <label>Data</label>
+            <input v-model="dataNoticia" type="date" class="form-input" required />
           </div>
-
-          <!-- CAMPO DESCRIÇÃO -->
-          <div class="form-group">
-            <label class="form-label">Descrição</label>
-            <textarea
-              v-model="descricao"
-              placeholder="Descreva os detalhes da atividade..."
-              class="form-textarea"
-              rows="6"
-              required
-            ></textarea>
+          <div class="form-group full">
+            <label>Descrição</label>
+            <textarea v-model="descricao" placeholder="Descrição detalhada..." class="form-textarea" rows="4" required></textarea>
           </div>
-
-          <!-- CAMPO IMAGEM -->
-          <div class="form-group">
-            <label class="form-label">Upload de Imagem</label>
+          <div class="form-group full">
+            <label>Imagem</label>
             <div class="file-upload">
-              <input
-                type="file"
-                @change="uploadImagem"
-                accept="image/*"
-                class="file-input"
-                id="file-input"
-              />
-              <label for="file-input" class="file-label">
-                <span class="file-icon">📸</span>
-                <span class="file-text">{{ file ? file.name : 'Clique para selecionar imagem' }}</span>
+              <input type="file" @change="uploadImagem" accept="image/*" class="file-input" id="foto-atividade" />
+              <label for="foto-atividade" class="file-label">
+                <svg class="icon-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                {{ file ? file.name : 'Clique para selecionar imagem' }}
               </label>
             </div>
           </div>
+        </div>
 
-          <!-- BOTÕES -->
-          <div class="form-actions">
-            <button type="submit" class="btn-publicar">
-              <span>✓</span> {{ editando ? 'Atualizar' : 'Publicar' }}
-            </button>
-          </div>
+        <button type="submit" class="btn-salvar">
+          <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          {{ editando ? 'Atualizar Atividade' : 'Publicar Atividade' }}
+        </button>
+      </form>
 
-          <!-- MENSAGEM DE SUCESSO -->
-          <transition name="fade">
-            <div v-if="publicado" class="sucesso-msg">
-              <span class="sucesso-icon">✅</span>
-              <span>Atividade salva com sucesso!</span>
-            </div>
-          </transition>
-
-        </form>
+      <div v-if="publicado" class="sucesso-msg">
+        <svg class="icon-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Atividade salva com sucesso!
       </div>
-    </main>
-  </div>
+    </div>
+  </PainelShell>
 </template>
 
 <script>
-export default {
+import PainelShell from '@/components/PainelShell.vue'
 
+export default {
+  components: { PainelShell },
   data() {
     return {
       titulo: '',
@@ -109,8 +82,13 @@ export default {
     }
   },
 
-  methods: {
+  mounted() {
+    if (localStorage.getItem("logado") !== "true") {
+      this.$router.push("/admin")
+    }
+  },
 
+  methods: {
     uploadImagem(e) {
       this.file = e.target.files[0]
     },
@@ -121,18 +99,12 @@ export default {
         formData.append("titulo", this.titulo)
         formData.append("descricao", this.descricao)
         formData.append("data", this.dataNoticia)
-
-        if (this.file) {
-          formData.append("foto", this.file)
-        }
+        if (this.file) formData.append("foto", this.file)
 
         const token = localStorage.getItem("token")
-
         const response = await fetch("http://localhost:8080/atividades", {
           method: "POST",
-          headers: {
-            "Authorization": `Bearer ${token}`
-          },
+          headers: { "Authorization": `Bearer ${token}` },
           body: formData
         })
 
@@ -141,18 +113,12 @@ export default {
           throw new Error(erro || "Erro ao salvar")
         }
 
-        const text = await response.text()
-        const data = text ? JSON.parse(text) : {}
-        console.log("Salvo:", data)
-
         this.publicado = true
         setTimeout(() => { this.publicado = false }, 3000)
-
         this.titulo = ''
         this.dataNoticia = ''
         this.descricao = ''
         this.file = null
-
       } catch (e) {
         alert("Erro ao salvar: " + e.message)
       }
@@ -164,291 +130,200 @@ export default {
       localStorage.removeItem("token")
       this.$router.push("/admin")
     }
-
   }
 }
 </script>
 
 <style scoped>
-* {
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
-.painel-wrapper {
+.admin-wrapper {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  font-family: 'Poppins', sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(240, 112, 48, 0.14), transparent 30%),
+    linear-gradient(180deg, #fff7f1 0%, #f7fbf5 100%);
+  color: #1a1a18;
+  font-family: inherit;
 }
 
-.painel-header {
-  background: linear-gradient(135deg, #ff8a3d 0%, #ff6a00 100%);
-  color: white;
-  padding: 24px 40px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+/* HEADER */
+.admin-header {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 50;
+  background: rgba(26, 58, 22, 0.96);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.painel-header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.admin-header-content {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 1.4rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .header-titulo {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 0.9rem;
+}
+<style scoped>
+/* Estilos locais — wrapper/header/logout ficam no PainelShell */
+.icon-header { width: 2rem; height: 2rem; color: #f07030; }
+
+.icon-btn,
+.icon-secao,
+.icon-msg,
+.icon-file {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
 }
 
-.header-icone {
-  font-size: 32px;
-  display: block;
+.secao-card {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(45, 90, 39, 0.1);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 18px 45px rgba(26, 58, 22, 0.08);
 }
 
-.painel-header h1 {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.painel-header p {
-  font-size: 13px;
-  opacity: 0.9;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.btn-logout {
+.secao-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 14px;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
 }
 
-.btn-logout:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: white;
-  transform: translateY(-2px);
+.icon-secao { color: #d95f1c; }
+
+.secao-titulo {
+  font-size: 1.2rem;
+  color: #1a3a16;
 }
 
-.painel-main {
-  max-width: 700px;
-  margin: 40px auto;
-  padding: 0 20px;
-}
-
-.painel-card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
-  padding: 40px;
-  animation: slideUp 0.6s ease-out;
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.painel-formulario {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.45rem;
 }
 
-.form-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.form-group.full { grid-column: 1 / -1; }
+
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #32502c;
 }
 
 .form-input,
 .form-textarea {
-  padding: 14px 16px;
-  border: 2px solid #e8e8e8;
-  border-radius: 10px;
-  font-size: 16px;
-  font-family: 'Poppins', sans-serif;
-  transition: all 0.3s ease;
-  background: #fafafa;
-  color: #333;
+  width: 100%;
+  padding: 0.95rem 1rem;
+  border: 1px solid rgba(45, 90, 39, 0.14);
+  border-radius: 1rem;
+  background: #fffdfa;
+  color: #1a1a18;
+  font: inherit;
+  transition: 0.2s ease;
 }
 
 .form-input:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: #ff8a3d;
-  background: white;
-  box-shadow: 0 0 0 4px rgba(255, 138, 61, 0.1);
-}
-
-.form-input::placeholder,
-.form-textarea::placeholder {
-  color: #ccc;
+  border-color: rgba(217, 95, 28, 0.55);
+  box-shadow: 0 0 0 4px rgba(217, 95, 28, 0.1);
+  background: #fff;
 }
 
 .form-textarea {
   resize: vertical;
-  min-height: 120px;
+  min-height: 130px;
 }
 
-.file-upload {
-  position: relative;
-}
+.file-upload { position: relative; }
 
 .file-input {
-  display: none;
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .file-label {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border: 2px dashed #ff8a3d;
-  border-radius: 10px;
-  background: #fff9f5;
+  gap: 0.65rem;
+  width: 100%;
+  min-height: 56px;
+  padding: 0.95rem 1rem;
+  border: 1.5px dashed rgba(217, 95, 28, 0.45);
+  border-radius: 1rem;
+  background: #fff6ef;
+  color: #8b4b22;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 14px;
-  color: #666;
+  transition: 0.2s ease;
+  font-family: inherit;
 }
 
 .file-label:hover {
-  background: #fff5f0;
-  border-color: #ff6a00;
+  background: #fff0e5;
+  border-color: #d95f1c;
 }
 
-.file-icon {
-  font-size: 20px;
-}
-
-.file-text {
-  font-weight: 500;
-}
-
-.form-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.btn-publicar {
-  flex: 1;
-  display: flex;
+.btn-salvar {
+  margin-top: 1.25rem;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 14px 24px;
-  background: linear-gradient(135deg, #ff8a3d 0%, #ff6a00 100%);
-  color: white;
+  gap: 0.55rem;
+  padding: 0.95rem 1.25rem;
   border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 600;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #1a3a16, #2d5a27);
+  color: #fff;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 10px 25px rgba(255, 138, 61, 0.2);
+  transition: 0.2s ease;
+  font-family: inherit;
+  font-size: 1rem;
 }
 
-.btn-publicar:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 35px rgba(255, 138, 61, 0.3);
-}
-
-.btn-publicar:active {
-  transform: translateY(0);
+.btn-salvar:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(26, 58, 22, 0.18);
 }
 
 .sucesso-msg {
-  display: flex;
+  margin-top: 1rem;
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  background: #d4edda;
-  border: 1px solid #c3e6cb;
-  border-radius: 8px;
-  color: #155724;
-  font-weight: 500;
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.sucesso-icon {
-  font-size: 18px;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+  gap: 0.55rem;
+  padding: 0.85rem 1rem;
+  border-radius: 1rem;
+  background: #edf8ec;
+  border: 1px solid rgba(45, 90, 39, 0.16);
+  color: #1a3a16;
+  font-weight: 600;
 }
 
 @media (max-width: 600px) {
-  .painel-header {
-    padding: 16px 20px;
-  }
-
-  .painel-header-content {
-    flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
-  }
-
-  .btn-logout {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .painel-card {
-    padding: 24px 16px;
-  }
-
-  .form-input,
-  .form-textarea {
-    padding: 12px 14px;
-    font-size: 14px;
-  }
-
-  .btn-publicar {
-    padding: 12px 20px;
-    font-size: 14px;
-  }
-
-  .painel-header h1 {
-    font-size: 20px;
-  }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-group.full { grid-column: 1; }
 }
 </style>

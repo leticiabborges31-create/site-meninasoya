@@ -48,7 +48,7 @@ const coordenadoras = [
         <div class="coord-hero-texto">
           <span class="coord-tag">Coordenação</span>
           <h1 class="coord-titulo">
-           As lideranças que fazem a .<br />
+           As lideranças que fazem a <br />
             rede acontecer<br />
             
           </h1>
@@ -66,7 +66,7 @@ const coordenadoras = [
     <!-- GRID DE COORDENADORAS -->
     <section class="coord-grid-section">
       <div class="coord-grid">
-        <div class="coord-card" v-for="(coord, i) in coordenadoras" :key="i">
+        <article class="coord-card" v-for="(coord, i) in coordenadoras" :key="i">
           <div class="coord-foto-wrap">
             <img :src="coord.foto" :alt="coord.nome" class="coord-foto" />
             <div class="coord-regiao-badge">{{ coord.regiao }}</div>
@@ -74,11 +74,11 @@ const coordenadoras = [
           <div class="coord-info">
             <h3 class="coord-nome">{{ coord.nome }}</h3>
             <a :href="coord.lattes" target="_blank" rel="noopener noreferrer" class="coord-lattes">
-              Curriculo Lattes
+              <span>Currículo Lattes</span>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 9.5L9.5 2.5M9.5 2.5H4M9.5 2.5V8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
-            <p class="coord-estado">{{ coord.estado }}</p>
           </div>
-        </div>
+        </article>
       </div>
     </section>
 
@@ -90,7 +90,7 @@ const coordenadoras = [
 <style scoped>
 .coord-page {
   background: #fdfcfa;
-  font-family: 'Georgia', 'Times New Roman', serif;
+  font-family: inherit;
   color: #1a1a18;
 }
 
@@ -124,13 +124,14 @@ const coordenadoras = [
 }
 
 .coord-tag {
-  display: inline-block;
-  font-family: 'Courier New', monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.16em;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  font-weight: 700;
   color: #f07030;
-  border: 1px solid rgba(240, 112, 48, 0.45);
+  background: rgba(240, 112, 48, 0.15);
   padding: 0.3rem 0.85rem;
   border-radius: 999px;
   margin-bottom: 1.5rem;
@@ -138,11 +139,11 @@ const coordenadoras = [
 
 .coord-titulo {
   font-size: clamp(2.8rem, 5.5vw, 5rem);
-  font-weight: 400;
-  line-height: 1.08;
+  font-weight: 800;
+  line-height: 1.06;
   color: #f5f2ec;
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 .coord-titulo em {
@@ -151,9 +152,10 @@ const coordenadoras = [
 }
 
 .coord-sub {
-  font-size: 1.1rem;
+  font-size: 1rem;
   line-height: 1.75;
-  color: rgba(245, 242, 236, 0.72);
+  font-weight: 400;
+  color: rgba(245, 242, 236, 0.68);
   margin-bottom: 2rem;
 }
 
@@ -174,28 +176,31 @@ const coordenadoras = [
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 1.5rem;
 }
 
 .coord-card {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  transition: transform 0.25s;
+  background: #fff;
+  border: 1px solid rgba(45, 90, 39, 0.12);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .coord-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 48px rgba(45, 90, 39, 0.12);
+  border-color: rgba(217, 95, 28, 0.25);
 }
 
 .coord-foto-wrap {
   position: relative;
-  border-radius: 1.2rem;
-  overflow: hidden;
   aspect-ratio: 1;
   background: #f0f5ef;
-  border: 1px solid rgba(45, 90, 39, 0.15);
+  overflow: hidden;
 }
 
 .coord-foto {
@@ -203,59 +208,63 @@ const coordenadoras = [
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.4s ease;
+  transition: transform 0.5s ease;
 }
 
 .coord-card:hover .coord-foto {
-  transform: scale(1.04);
+  transform: scale(1.06);
 }
 
 .coord-regiao-badge {
   position: absolute;
-  top: 0.8rem;
-  left: 0.8rem;
-  background: #d95f1c;
+  top: 0.75rem;
+  left: 0.75rem;
+  background: rgba(217, 95, 28, 0.92);
+  backdrop-filter: blur(4px);
   color: #fff;
-  font-family: 'Courier New', monospace;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 0.3rem 0.75rem;
+  padding: 0.28rem 0.7rem;
   border-radius: 999px;
 }
 
 .coord-info {
-  padding: 0 0.25rem;
+  padding: 1.1rem 1.25rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  flex: 1;
+  justify-content: space-between;
 }
 
 .coord-nome {
-  font-size: 1.05rem;
-  font-weight: 400;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: #1a3a16;
-  margin: 0 0 0.35rem;
-  line-height: 1.3;
+  margin: 0;
+  line-height: 1.35;
 }
 
 .coord-lattes {
   display: inline-flex;
-  font-family: 'Courier New', monospace;
-  font-size: 0.78rem;
-  color: #d95f1c;
+  align-items: center;
+  gap: 0.4rem;
+  align-self: flex-start;
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  margin: 0 0 0.2rem;
+  color: #d95f1c;
+  background: rgba(217, 95, 28, 0.08);
+  padding: 0.35rem 0.85rem 0.35rem 0.85rem;
+  border-radius: 999px;
   text-decoration: none;
+  transition: background 0.18s ease, color 0.18s ease;
 }
 
 .coord-lattes:hover {
-  text-decoration: underline;
-}
-
-.coord-estado {
-  font-size: 0.88rem;
-  color: #4a4a44;
-  margin: 0;
+  background: rgba(217, 95, 28, 0.16);
+  color: #b84e14;
 }
 
 /* ── RESPONSIVO ──────────────────────────────────────── */
