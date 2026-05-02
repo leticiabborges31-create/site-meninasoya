@@ -1,3 +1,44 @@
+<script setup>
+import carolinaFoto from '../assets/carolina.png'
+import graciellaFoto from '../assets/graciella.png'
+import inesFoto from '../assets/ines.png'
+import isabelleFoto from '../assets/isabelle.png'
+import reginaFoto from '../assets/regina.png'
+
+const coordenadoras = [
+  {
+    nome: 'Carolina Pereira Aranha',
+    lattes: 'https://lattes.cnpq.br/',
+    regiao: 'Geral',
+    foto: carolinaFoto,
+  },
+  {
+    nome: 'Graciella Watanabe',
+    lattes: 'https://lattes.cnpq.br/',
+    regiao: 'Sudeste',
+    foto: graciellaFoto,
+  },
+  {
+    nome: ' Inés Prieto Schmidt Sauerwein',
+    lattes: 'https://lattes.cnpq.br/',
+    regiao: 'Sul',
+    foto: inesFoto,
+  },
+  {
+    nome: 'Isabelle Priscila Carneiro de Lima',
+    lattes: 'https://lattes.cnpq.br/',
+    regiao: 'Bahia',
+    foto: isabelleFoto,
+  },
+  {
+    nome: 'Regina Célia de Sousa ',
+    lattes: 'https://lattes.cnpq.br/',
+    regiao: 'Maranhão',
+    foto: reginaFoto,
+  },
+]
+</script>
+
 <template>
   <main class="coord-page">
 
@@ -32,7 +73,9 @@
           </div>
           <div class="coord-info">
             <h3 class="coord-nome">{{ coord.nome }}</h3>
-            <p class="coord-uni">{{ coord.universidade }}</p>
+            <a :href="coord.lattes" target="_blank" rel="noopener noreferrer" class="coord-lattes">
+              Curriculo Lattes
+            </a>
             <p class="coord-estado">{{ coord.estado }}</p>
           </div>
         </div>
@@ -194,13 +237,19 @@
   line-height: 1.3;
 }
 
-.coord-uni {
+.coord-lattes {
+  display: inline-flex;
   font-family: 'Courier New', monospace;
   font-size: 0.78rem;
   color: #d95f1c;
   font-weight: 700;
   letter-spacing: 0.06em;
   margin: 0 0 0.2rem;
+  text-decoration: none;
+}
+
+.coord-lattes:hover {
+  text-decoration: underline;
 }
 
 .coord-estado {

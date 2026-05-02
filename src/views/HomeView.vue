@@ -43,7 +43,6 @@
               alt="Sobre o projeto"
             />
           </div>
-          <div class="sobre-numero"><span>01</span>Sobre</div>
         </div>
         <div class="sobre-texto">
           <span class="secao-tag">Nossa missão</span>
@@ -462,24 +461,6 @@ export default {
 .sobre-img-wrap img {
   width: 85%;
   object-fit: contain;
-}
-
-.sobre-numero {
-  margin-top: 1.2rem;
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  font-family: 'Courier New', monospace;
-  font-size: 0.8rem;
-  letter-spacing: 0.1em;
-  color: #4a4a44;
-}
-
-.sobre-numero span {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #2d5a27;
-  line-height: 1;
 }
 
 .secao-tag {

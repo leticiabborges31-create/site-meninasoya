@@ -22,9 +22,9 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Senha</label>
+          <label class="form-label">password</label>
           <input 
-            v-model="loginSenha" 
+            v-model="loginpassword" 
             type="password" 
             placeholder="••••••••"
             class="form-input"
@@ -53,7 +53,7 @@ export default {
   data() {
     return {
       loginUsername: '',
-      loginSenha: ''
+      loginpassword: ''
     }
   },
 
@@ -62,20 +62,20 @@ export default {
       try {
         console.log("Tentando login...")
 
-        const response = await fetch("http://localhost:8080/login", {
+        const response = await fetch("http://localhost:8080/auth", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
             username: this.loginUsername,
-            password: this.loginSenha
+            password: this.loginpassword
           })
         })
 
         // Se login falhar
         if (!response.ok) {
-          alert("Usuário ou senha inválidos")
+          alert("Usuário ou password inválidos")
           return
         }
 

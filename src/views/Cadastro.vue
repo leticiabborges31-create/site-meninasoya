@@ -5,7 +5,7 @@
     <form @submit.prevent="cadastrar">
       <input v-model="nome" type="text" placeholder="Nome" required />
       <input v-model="email" type="email" placeholder="Email" required />
-      <input v-model="senha" type="password" placeholder="Senha" required />
+      <input v-model="password" type="password" placeholder="password" required />
 
       <button type="submit">Cadastrar</button>
     </form>
@@ -23,7 +23,7 @@ const router = useRouter()
 
 const nome = ref('')
 const email = ref('')
-const senha = ref('')
+const password = ref('')
 const mensagem = ref('')
 
 const cadastrar = async () => {
@@ -31,7 +31,7 @@ const cadastrar = async () => {
     const response = await axios.post('http://localhost:8080/usuarios', {
       nome: nome.value,
       email: email.value,
-      senha: senha.value
+      password: password.value
     })
 
     // ✅ mensagem
@@ -44,7 +44,7 @@ const cadastrar = async () => {
     // limpar campos
     nome.value = ''
     email.value = ''
-    senha.value = ''
+    password.value = ''
 
     // 🔥 redireciona pro painel
     setTimeout(() => {

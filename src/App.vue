@@ -12,9 +12,9 @@
       <nav class="menu" aria-label="Menu principal">
         <a href="#sobre" @click.prevent="navegarPara('sobre')">Sobre</a>
         <router-link to="/atividades">Atividades</router-link>
-        <router-link to="/coordenacao">Coordenacao</router-link>
+        <router-link to="/coordenacao">Coordenação</router-link>
         <router-link to="/parceria">Parceria</router-link>
-        <router-link to="/admin" class="menu-cta">Administracao</router-link>
+        <router-link to="/admin" class="menu-cta">Administração</router-link>
       </nav>
     </header>
 
