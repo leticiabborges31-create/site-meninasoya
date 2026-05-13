@@ -27,7 +27,7 @@
               alt="Meninas Oyá"
             />
           </div>
-          <div class="hero-badge">+500 mulheres impactadas</div>
+          <div class="hero-badge">+50 mulheres impactadas</div>
         </div>
       </div>
       <div class="hero-linha"></div>
@@ -78,7 +78,7 @@
         </div>
         <div class="numero-divider"></div>
         <div class="numero-item">
-          <span class="numero-big">500+</span>
+          <span class="numero-big">50+</span>
           <span class="numero-label">Mulheres impactadas</span>
         </div>
         <div class="numero-divider"></div>
@@ -107,7 +107,7 @@
           >
             <div class="card-num">{{ String(index + 1).padStart(2, '0') }}</div>
             <h3 class="card-titulo">{{ atividade.titulo }}</h3>
-            <p class="card-desc">{{ atividade.descricao }}</p>
+            <p class="card-desc">{{ truncar(atividade.descricao) }}</p>
             <span class="card-data">{{ atividade.data }}</span>
           </div>
         </div>
@@ -183,11 +183,21 @@
     <footer class="rodape">
       <div class="rodape-inner">
         <div class="rodape-marca">
-          <span class="rodape-mo">MO</span>
+          <img src="@/assets/logo-oia.png" alt="Meninas Oyá" class="rodape-logo" />
           <div>
             <strong>Meninas Oyá</strong>
             <span>Rede de apoio e protagonismo</span>
           </div>
+        </div>
+        <div class="rodape-info">
+          <span class="rodape-local">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            UFMA – Centro de Ciências Exatas e Tecnologia (CCET), São Luís – MA
+          </span>
+          <span class="rodape-email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            contato@meninasoya.ufma.br
+          </span>
         </div>
         <p class="rodape-copy">© 2025 Meninas Oyá · Todos os direitos reservados</p>
       </div>
@@ -243,8 +253,13 @@ export default {
     },
 
     abrirAtividade(atividade) {
-      localStorage.setItem("atividadeSelecionada", JSON.stringify(atividade));
-      this.$router.push("/atividade");
+      this.$router.push(`/atividade/${atividade.id}`);
+    },
+
+    truncar(texto) {
+      if (!texto) return ''
+      const limpo = texto.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim()
+      return limpo.length > 120 ? limpo.slice(0, 120) + '...' : limpo
     },
 
     avancar() {
@@ -270,15 +285,618 @@ export default {
 <style scoped>
 /* ── BASE ────────────────────────────────────────────── */
 .home {
-  font-family: inherit;
-  background: #fdfcfa;
-  color: #1a1a18;
+  font-family: var(--font-body);
+  background: var(--oya-bg);
+  color: var(--oya-char);
   overflow-x: hidden;
 }
 
 /* ── HERO ────────────────────────────────────────────── */
 .hero {
-  background-color: #1a3a16 !important;
+  background-color: var(--oya-forest);
+  height: calc(100vh - 3.5rem);
+  min-height: 540px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 80% at 80% 50%, rgba(217, 79, 30, 0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 10% 80%, rgba(107, 170, 138, 0.15) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 4rem;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--oya-glow);
+  background: rgba(255, 133, 85, 0.12);
+  padding: 0.3rem 0.9rem;
+  border-radius: var(--radius-pill);
+  margin-bottom: 1.5rem;
+}
+
+.hero-titulo {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 5vw, 4.5rem);
+  line-height: 1.05;
+  color: #fff;
+  margin: 0 0 1.2rem;
+}
+
+.hero-titulo em {
+  font-style: italic;
+  color: var(--oya-glow);
+}
+
+.hero-sub {
+  font-size: 1rem;
+  color: var(--oya-fern);
+  line-height: 1.7;
+  max-width: 440px;
+  margin-bottom: 2rem;
+}
+
+.hero-btns {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.hero-imagem {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-img-wrap {
+  width: 100%;
+  max-width: 460px;
+  aspect-ratio: 1;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 0.5px solid rgba(107, 170, 138, 0.3);
+  background: rgba(44, 82, 64, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-img-wrap img {
+  width: 85%;
+  height: 85%;
+  object-fit: contain;
+}
+
+.hero-badge {
+  position: absolute;
+  bottom: -1rem;
+  left: -1rem;
+  background: var(--oya-ember);
+  color: #fff;
+  padding: 0.75rem 1.2rem;
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  box-shadow: 0 8px 24px rgba(217, 79, 30, 0.35);
+}
+
+.hero-linha {
+  height: 3px;
+  background: linear-gradient(90deg, var(--oya-ember) 0%, var(--oya-fern) 100%);
+}
+
+/* ── SOBRE ────────────────────────────────────────────── */
+.sobre {
+  background: var(--oya-bg);
+  padding: 7rem 4rem;
+}
+
+.sobre-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+.sobre-img-wrap {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: rgba(168, 213, 192, 0.15);
+  border: 0.5px solid var(--oya-fog);
+  aspect-ratio: 4/5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sobre-img-wrap img {
+  width: 85%;
+  object-fit: contain;
+}
+
+.sobre-titulo {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+  line-height: 1.2;
+  color: var(--oya-forest);
+  margin: 0 0 1.5rem;
+}
+
+.sobre-p {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--oya-stone);
+  margin-bottom: 1.5rem;
+}
+
+.sobre-quote {
+  border-left: 3px solid var(--oya-ember);
+  padding: 1rem 1.5rem;
+  margin: 0;
+  background: var(--oya-sand);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--oya-stone);
+  font-style: italic;
+}
+
+/* ── NÚMEROS ─────────────────────────────────────────── */
+.numeros {
+  background: var(--oya-sage);
+  padding: 4rem;
+}
+
+.numeros-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.numero-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 1;
+  min-width: 120px;
+}
+
+.numero-big {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  color: var(--oya-warm);
+  line-height: 1;
+}
+
+.numero-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--oya-mint);
+  text-align: center;
+}
+
+.numero-divider {
+  width: 0.5px;
+  height: 60px;
+  background: rgba(168, 213, 192, 0.25);
+  flex-shrink: 0;
+}
+
+/* ── ATIVIDADES ──────────────────────────────────────── */
+.atividades {
+  background: rgba(168, 213, 192, 0.1);
+  padding: 7rem 4rem;
+}
+
+.atividades-header {
+  max-width: 1200px;
+  margin: 0 auto 3.5rem;
+}
+
+.atividades-titulo {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  color: var(--oya-forest);
+  margin: 0;
+  line-height: 1.15;
+}
+
+.carrossel {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.btn-nav {
+  background: var(--oya-forest);
+  color: var(--oya-mint);
+  border: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.btn-nav:hover {
+  background: var(--oya-ember);
+  transform: scale(1.08);
+  color: #fff;
+}
+
+.cards-wrap {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.card-ativ {
+  background: #fff;
+  border: 0.5px solid var(--oya-fog);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.card-ativ:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(26, 58, 42, 0.1);
+  border-color: var(--oya-mist);
+}
+
+.card-num {
+  font-size: 0.7rem;
+  color: var(--oya-ember);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.card-titulo {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--oya-forest);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.card-desc {
+  font-size: 0.9rem;
+  color: var(--oya-stone);
+  line-height: 1.65;
+  margin: 0;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-data {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--oya-ember);
+  letter-spacing: 0.04em;
+}
+
+.sem-ativ {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  color: var(--oya-steel);
+  font-style: italic;
+  padding: 3rem;
+}
+
+/* ── REGIÕES ──────────────────────────────────────────── */
+.regioes {
+  background: var(--oya-bg);
+  padding: 7rem 4rem;
+}
+
+.regioes-header {
+  max-width: 1200px;
+  margin: 0 auto 3.5rem;
+}
+
+.regioes-titulo {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  color: var(--oya-forest);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.regioes-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: start;
+}
+
+.mapa-wrap {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: rgba(168, 213, 192, 0.12);
+  border: 0.5px solid var(--oya-fog);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.mapa-img {
+  width: 100%;
+  max-width: 420px;
+  object-fit: contain;
+}
+
+.estados-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.estado-card {
+  border: 0.5px solid var(--oya-fog);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.estado-card.aberto {
+  border-color: var(--oya-mist);
+}
+
+.estado-header {
+  width: 100%;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.1rem 1.4rem;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.estado-header:hover {
+  background: rgba(168, 213, 192, 0.1);
+}
+
+.estado-card.aberto .estado-header {
+  background: var(--oya-sage);
+}
+
+.estado-nome {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--oya-forest);
+}
+
+.estado-card.aberto .estado-nome {
+  color: var(--oya-mint);
+}
+
+.estado-icon {
+  font-size: 1.4rem;
+  color: var(--oya-ember);
+  font-weight: 300;
+  line-height: 1;
+}
+
+.estado-corpo {
+  padding: 1.1rem 1.4rem;
+  background: var(--oya-sand);
+  border-top: 0.5px solid var(--oya-fog);
+}
+
+.estado-uni {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--oya-forest);
+  margin: 0 0 0.4rem;
+}
+
+.estado-coord {
+  font-size: 0.82rem;
+  color: var(--oya-ember);
+  font-weight: 500;
+  margin: 0;
+}
+
+/* ── FINANCIADORES ──────────────────────────────────── */
+.financiadores {
+  background: var(--oya-sand);
+  padding: 5rem 4rem;
+  border-top: 0.5px solid var(--oya-fog);
+}
+
+.financiadores-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.financiadores-titulo {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--oya-forest);
+  margin: 0 0 2.5rem;
+}
+
+.logos-financiadores {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4rem;
+  flex-wrap: wrap;
+}
+
+.logo-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+}
+
+.logo-divider {
+  width: 0.5px;
+  height: 80px;
+  background: var(--oya-fog);
+}
+
+.logo-financiador {
+  max-width: 180px;
+  max-height: 100px;
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.3s;
+}
+
+.logo-financiador:hover { transform: scale(1.05); }
+
+/* ── RODAPÉ ──────────────────────────────────────────── */
+.rodape {
+  background: var(--oya-deep);
+  padding: 3rem 4rem;
+}
+
+.rodape-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.rodape-marca {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.rodape-logo {
+  width: 2.75rem;
+  height: 2.75rem;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  background: #fff;
+  padding: 2px;
+}
+
+.rodape-marca strong { display: block; font-size: 0.9rem; color: var(--oya-cream); font-weight: 500; }
+.rodape-marca span  { font-size: 0.75rem; color: var(--oya-fern); display: block; }
+.rodape-copy { font-size: 0.78rem; color: var(--oya-steel); }
+
+.rodape-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.rodape-local,
+.rodape-email {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--oya-fern);
+}
+
+.rodape-email a {
+  color: var(--oya-fern);
+  text-decoration: none;
+}
+.rodape-email a:hover { text-decoration: underline; }
+
+/* ── RESPONSIVO ──────────────────────────────────────── */
+@media (max-width: 900px) {
+  .hero-inner,
+  .sobre-inner,
+  .regioes-inner {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding: 4rem 1.5rem;
+  }
+
+  .hero { min-height: auto; }
+  .hero-imagem { order: -1; }
+  .hero-img-wrap { max-width: 300px; margin: 0 auto; }
+
+  .sobre,
+  .atividades,
+  .regioes,
+  .financiadores { padding: 4rem 1.5rem; }
+
+  .numeros { padding: 3rem 1.5rem; }
+  .numeros-inner { justify-content: center; }
+  .numero-divider { display: none; }
+
+  .cards-wrap { grid-template-columns: 1fr; }
+  .carrossel { flex-direction: column; }
+
+  .logos-financiadores { gap: 2rem; }
+  .logo-divider { display: none; }
+  .logo-financiador { max-width: 140px; max-height: 80px; }
+
+  .rodape { padding: 2.5rem 1.5rem; }
+  .rodape-inner { flex-direction: column; text-align: center; }
+}
+
+/* ── HERO ────────────────────────────────────────────── */
+.hero {
+  background-color: var(--oya-forest) !important;
   height: calc(100vh - 3.5rem);
   min-height: 540px;
   display: flex;
@@ -319,10 +937,10 @@ export default {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 600;
-  color: #f07030;
-  background: rgba(240, 112, 48, 0.12);
+  color: var(--oya-flame);
+  background: rgba(217, 79, 30, 0.1);
   padding: 0.3rem 0.85rem;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   margin-bottom: 1.5rem;
 }
 
@@ -330,19 +948,19 @@ export default {
   font-size: clamp(2.4rem, 5vw, 4.5rem);
   font-weight: 800;
   line-height: 1.05;
-  color: #f5f2ec !important;
+  color: var(--oya-cream) !important;
   margin: 0 0 1.2rem;
   letter-spacing: -0.03em;
 }
 
 .hero-titulo em {
   font-style: italic;
-  color: #f07030;
+  color: var(--oya-flame);
 }
 
 .hero-sub {
   font-size: 1rem;
-  color: rgba(245, 242, 236, 0.75) !important;
+  color: rgba(240, 237, 232, 0.72) !important;
   line-height: 1.7;
   max-width: 440px;
   margin-bottom: 2rem;
@@ -356,26 +974,26 @@ export default {
 }
 
 .btn-primary {
-  background: #d95f1c;
+  background: var(--oya-ember);
   color: #fff !important;
   padding: 0.85rem 1.75rem;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   text-decoration: none;
   font-size: 0.875rem;
   letter-spacing: 0.02em;
-  font-weight: 700;
+  font-weight: 500;
   transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 
 .btn-primary:hover {
-  background: #f07030;
+  background: var(--oya-flame);
   transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(217, 95, 28, 0.3);
+  box-shadow: 0 10px 28px rgba(217, 79, 30, 0.28);
 }
 
 .btn-outline {
-  border: 1.5px solid rgba(245, 242, 236, 0.35);
-  color: #f5f2ec !important;
+  border: 1.5px solid rgba(240, 237, 232, 0.35);
+  color: var(--oya-cream) !important;
   padding: 0.85rem 1.75rem;
   border-radius: 999px;
   text-decoration: none;
@@ -385,8 +1003,8 @@ export default {
 }
 
 .btn-outline:hover {
-  border-color: rgba(245, 242, 236, 0.7);
-  background: rgba(245, 242, 236, 0.08);
+  border-color: rgba(240, 237, 232, 0.65);
+  background: rgba(240, 237, 232, 0.08);
 }
 
 .hero-imagem {
@@ -401,8 +1019,8 @@ export default {
   aspect-ratio: 1;
   border-radius: 2rem;
   overflow: hidden;
-  border: 1px solid rgba(240, 112, 48, 0.3);
-  background: rgba(74, 138, 66, 0.2);
+  border: 0.5px solid rgba(217, 79, 30, 0.25);
+  background: rgba(74, 122, 98, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -418,24 +1036,24 @@ export default {
   position: absolute;
   bottom: -1rem;
   left: -1rem;
-  background: #d95f1c;
+  background: var(--oya-ember);
   color: #fff !important;
   padding: 0.75rem 1.2rem;
   border-radius: 1rem;
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.02em;
-  box-shadow: 0 8px 24px rgba(217, 95, 28, 0.4);
+  box-shadow: 0 8px 24px rgba(217, 79, 30, 0.35);
 }
 
 .hero-linha {
   height: 4px;
-  background: linear-gradient(90deg, #d95f1c 0%, #4a8a42 100%);
+  background: linear-gradient(90deg, var(--oya-ember) 0%, var(--oya-fern) 100%);
 }
 
 /* ── SOBRE ────────────────────────────────────────────── */
 .sobre {
-  background: #fdfcfa;
+  background: var(--oya-bg);
   padding: 7rem 4rem;
 }
 
@@ -449,10 +1067,10 @@ export default {
 }
 
 .sobre-img-wrap {
-  border-radius: 2rem;
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  background: #f0f5ef;
-  border: 1px solid rgba(45, 90, 39, 0.15);
+  background: var(--oya-cream);
+  border: 0.5px solid var(--oya-fog);
   aspect-ratio: 4/5;
   display: flex;
   align-items: center;
@@ -469,45 +1087,45 @@ export default {
   font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  font-weight: 700;
-  color: #d95f1c;
-  background: rgba(217, 95, 28, 0.1);
+  font-weight: 500;
+  color: var(--oya-ember);
+  background: rgba(217, 79, 30, 0.08);
   padding: 0.28rem 0.75rem;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   margin-bottom: 1.2rem;
 }
 
 .sobre-titulo {
+  font-family: var(--font-display);
   font-size: clamp(1.9rem, 3.5vw, 2.8rem);
-  font-weight: 700;
   line-height: 1.2;
-  color: #1a3a16;
+  color: var(--oya-forest);
   margin: 0 0 1.5rem;
   letter-spacing: -0.025em;
 }
 
 .sobre-p {
-  font-size: 1.05rem;
+  font-size: 1rem;
   line-height: 1.8;
-  color: #4a4a44;
+  color: var(--oya-stone);
   margin-bottom: 1.5rem;
 }
 
 .sobre-quote {
-  border-left: 4px solid #d95f1c;
+  border-left: 3px solid var(--oya-ember);
   padding: 1rem 1.5rem;
   margin: 0;
-  background: #fff4ed;
-  border-radius: 0 1rem 1rem 0;
+  background: var(--oya-sand);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
   font-size: 1rem;
   line-height: 1.75;
-  color: #1a1a18;
+  color: var(--oya-char);
   font-style: italic;
 }
 
 /* ── NÚMEROS ─────────────────────────────────────────── */
 .numeros {
-  background: #2d5a27;
+  background: var(--oya-sage);
   padding: 4rem;
 }
 
@@ -531,9 +1149,9 @@ export default {
 }
 
 .numero-big {
+  font-family: var(--font-display);
   font-size: clamp(2.5rem, 5vw, 4rem);
-  font-weight: 800;
-  color: #f07030;
+  color: var(--oya-warm);
   line-height: 1;
   letter-spacing: -0.03em;
 }
@@ -542,21 +1160,21 @@ export default {
   font-size: 0.72rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  font-weight: 600;
-  color: rgba(245, 242, 236, 0.65);
+  font-weight: 500;
+  color: rgba(240, 237, 232, 0.6);
   text-align: center;
 }
 
 .numero-divider {
   width: 1px;
   height: 60px;
-  background: rgba(245, 242, 236, 0.2);
+  background: rgba(240, 237, 232, 0.18);
   flex-shrink: 0;
 }
 
 /* ── ATIVIDADES ──────────────────────────────────────── */
 .atividades {
-  background: #f0f5ef;
+  background: var(--oya-cream);
   padding: 7rem 4rem;
 }
 
@@ -566,9 +1184,9 @@ export default {
 }
 
 .atividades-titulo {
+  font-family: var(--font-display);
   font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 700;
-  color: #1a3a16;
+  color: var(--oya-forest);
   margin: 0;
   letter-spacing: -0.03em;
 }
@@ -582,7 +1200,7 @@ export default {
 }
 
 .btn-nav {
-  background: #2d5a27;
+  background: var(--oya-sage);
   color: #fff;
   border: none;
   width: 48px;
@@ -595,7 +1213,7 @@ export default {
 }
 
 .btn-nav:hover {
-  background: #d95f1c;
+  background: var(--oya-ember);
   transform: scale(1.08);
 }
 
@@ -608,8 +1226,8 @@ export default {
 
 .card-ativ {
   background: #fff;
-  border: 1px solid rgba(45, 90, 39, 0.15);
-  border-radius: 1.5rem;
+  border: 0.5px solid var(--oya-fog);
+  border-radius: var(--radius-lg);
   padding: 2rem;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
@@ -620,38 +1238,42 @@ export default {
 
 .card-ativ:hover {
   transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(45, 90, 39, 0.12);
-  border-color: #4a8a42;
+  box-shadow: 0 16px 40px rgba(26, 58, 42, 0.1);
+  border-color: var(--oya-mist);
 }
 
 .card-num {
   font-size: 0.72rem;
-  color: #d95f1c;
-  font-weight: 700;
+  color: var(--oya-ember);
+  font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .card-titulo {
+  font-family: var(--font-display);
   font-size: 1.05rem;
-  font-weight: 600;
-  color: #1a3a16;
+  color: var(--oya-forest);
   margin: 0;
   line-height: 1.35;
 }
 
 .card-desc {
-  font-size: 0.93rem;
-  color: #4a4a44;
+  font-size: 0.9rem;
+  color: var(--oya-stone);
   line-height: 1.65;
   margin: 0;
   flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .card-data {
   font-size: 0.78rem;
-  font-weight: 600;
-  color: #d95f1c;
+  font-weight: 500;
+  color: var(--oya-ember);
   letter-spacing: 0.04em;
 }
 
@@ -659,14 +1281,14 @@ export default {
   max-width: 1200px;
   margin: 0 auto;
   text-align: center;
-  color: #4a4a44;
+  color: var(--oya-stone);
   font-style: italic;
   padding: 3rem;
 }
 
 /* ── REGIÕES ──────────────────────────────────────────── */
 .regioes {
-  background: #fdfcfa;
+  background: var(--oya-bg);
   padding: 7rem 4rem;
 }
 
@@ -676,9 +1298,9 @@ export default {
 }
 
 .regioes-titulo {
+  font-family: var(--font-display);
   font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 700;
-  color: #1a3a16;
+  color: var(--oya-forest);
   margin: 0;
   letter-spacing: -0.03em;
   line-height: 1.2;
@@ -694,10 +1316,10 @@ export default {
 }
 
 .mapa-wrap {
-  border-radius: 2rem;
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  background: #f0f5ef;
-  border: 1px solid rgba(45, 90, 39, 0.15);
+  background: var(--oya-cream);
+  border: 0.5px solid var(--oya-fog);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -717,19 +1339,19 @@ export default {
 }
 
 .estado-card {
-  border: 1.5px solid rgba(45, 90, 39, 0.15);
-  border-radius: 1rem;
+  border: 0.5px solid var(--oya-fog);
+  border-radius: var(--radius-md);
   overflow: hidden;
   transition: border-color 0.2s;
 }
 
 .estado-card.aberto {
-  border-color: #4a8a42;
+  border-color: var(--oya-mist);
 }
 
 .estado-header {
   width: 100%;
-  background: #fdfcfa;
+  background: var(--oya-bg);
   border: none;
   cursor: pointer;
   display: flex;
@@ -738,58 +1360,59 @@ export default {
   padding: 1.2rem 1.5rem;
   text-align: left;
   transition: background 0.15s;
+  font-family: var(--font-body);
 }
 
 .estado-header:hover {
-  background: #f0f5ef;
+  background: var(--oya-cream);
 }
 
 .estado-card.aberto .estado-header {
-  background: #2d5a27;
+  background: var(--oya-sage);
 }
 
 .estado-nome {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #1a3a16;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--oya-forest);
 }
 
 .estado-card.aberto .estado-nome {
-  color: #f5f2ec !important;
+  color: var(--oya-cream) !important;
 }
 
 .estado-icon {
-  font-size: 1.4rem;
-  color: #d95f1c;
+  font-size: 1.35rem;
+  color: var(--oya-ember);
   font-weight: 300;
   line-height: 1;
 }
 
 .estado-corpo {
   padding: 1.2rem 1.5rem;
-  background: #fff4ed;
-  border-top: 1px solid rgba(217, 95, 28, 0.15);
+  background: var(--oya-sand);
+  border-top: 0.5px solid rgba(217, 79, 30, 0.12);
 }
 
 .estado-uni {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #1a3a16;
-  margin: 0 0 0.4rem;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  color: var(--oya-forest);
+  margin: 0 0 0.35rem;
 }
 
 .estado-coord {
-  font-size: 0.85rem;
-  color: #d95f1c;
-  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--oya-ember);
+  font-weight: 500;
   margin: 0;
 }
 
 /* ── FINANCIADORES ──────────────────────────────────── */
 .financiadores {
-  background: #fff4ed;
+  background: var(--oya-sand);
   padding: 5rem 4rem;
-  border-top: 2px solid #f07030;
+  border-top: 0.5px solid var(--oya-fog);
 }
 
 .financiadores-inner {
@@ -799,9 +1422,9 @@ export default {
 }
 
 .financiadores-titulo {
+  font-family: var(--font-display);
   font-size: 1.5rem;
-  font-weight: 700;
-  color: #1a3a16;
+  color: var(--oya-forest);
   margin: 0 0 2.5rem;
   letter-spacing: -0.02em;
 }
@@ -822,9 +1445,9 @@ export default {
 }
 
 .logo-divider {
-  width: 2px;
+  width: 1px;
   height: 80px;
-  background: rgba(45, 90, 39, 0.2);
+  background: var(--oya-fog);
 }
 
 .logo-financiador {
@@ -841,7 +1464,7 @@ export default {
 
 /* ── RODAPÉ ──────────────────────────────────────────── */
 .rodape {
-  background: #1a3a16;
+  background: var(--oya-deep);
   padding: 3rem 4rem;
 }
 
@@ -866,29 +1489,29 @@ export default {
   place-items: center;
   width: 2.75rem;
   height: 2.75rem;
-  border-radius: 0.85rem;
-  background: linear-gradient(135deg, #f07030, #d95f1c);
+  border-radius: var(--radius-sm);
+  background: var(--oya-ember);
   color: #fff;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 0.9rem;
   letter-spacing: 0.04em;
 }
 
 .rodape-marca strong {
   display: block;
-  font-size: 1rem;
-  color: #f5f2ec;
+  font-size: 0.95rem;
+  color: var(--oya-cream);
 }
 
 .rodape-marca span {
-  font-size: 0.82rem;
-  color: rgba(245, 242, 236, 0.55);
+  font-size: 0.78rem;
+  color: rgba(240, 237, 232, 0.5);
 }
 
 .rodape-copy {
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: rgba(245, 242, 236, 0.4);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: rgba(240, 237, 232, 0.38);
   letter-spacing: 0.03em;
   margin: 0;
 }

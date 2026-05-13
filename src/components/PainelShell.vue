@@ -50,8 +50,6 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
-
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -60,26 +58,24 @@ export default {
 
 .admin-wrapper {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(240, 112, 48, 0.14), transparent 30%),
-    linear-gradient(180deg, #fff7f1 0%, #f7fbf5 100%);
-  color: #1a1a18;
-  font-family: inherit;
+  background: var(--oya-bg);
+  color: var(--oya-char);
+  font-family: var(--font-body);
 }
 
 .admin-header {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(26, 58, 22, 0.96);
+  background: var(--oya-forest);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 0.5px solid rgba(107, 170, 138, 0.15);
 }
 
 .admin-header-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1.4rem 1.5rem;
+  padding: 1.25rem 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -93,27 +89,28 @@ export default {
 }
 
 .header-titulo h1 {
-  color: #fff8f1;
-  font-size: clamp(1.35rem, 2vw, 2rem);
-  margin-bottom: 0.15rem;
+  color: var(--oya-cream);
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  margin-bottom: 0.1rem;
 }
 
 .header-titulo p {
-  color: rgba(255, 248, 241, 0.7);
-  font-size: 0.9rem;
+  color: var(--oya-fern);
+  font-size: 0.8rem;
 }
 
 /* ── ÍCONES ──────────────────────────────────────────── */
 :deep(.icon-header) {
-  width: 2rem;
-  height: 2rem;
-  color: #f07030;
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--oya-glow);
   flex-shrink: 0;
 }
 
 .icon-btn {
-  width: 1.15rem;
-  height: 1.15rem;
+  width: 1.1rem;
+  height: 1.1rem;
   flex-shrink: 0;
 }
 
@@ -123,20 +120,22 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff8f1;
-  padding: 0.8rem 1.1rem;
-  border-radius: 999px;
-  font-weight: 600;
+  border: 1px solid rgba(168, 213, 192, 0.2);
+  background: rgba(168, 213, 192, 0.07);
+  color: var(--oya-mint);
+  padding: 0.7rem 1.1rem;
+  border-radius: var(--radius-pill);
+  font-weight: 500;
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: 0.2s ease;
-  font-family: inherit;
+  transition: background 0.2s, border-color 0.2s;
+  font-family: var(--font-body);
 }
 
 .btn-logout:hover {
-  background: rgba(240, 112, 48, 0.18);
-  border-color: rgba(240, 112, 48, 0.35);
+  background: rgba(217, 79, 30, 0.15);
+  border-color: rgba(217, 79, 30, 0.3);
+  color: var(--oya-warm);
 }
 
 /* ── MAIN ────────────────────────────────────────────── */

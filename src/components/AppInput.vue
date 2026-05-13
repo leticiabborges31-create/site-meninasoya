@@ -57,12 +57,12 @@ export default {
 }
 
 .app-label {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: #32502c;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--oya-stone);
 }
 
-.required-star { color: #d95f1c; margin-left: 2px; }
+.required-star { color: var(--oya-ember); margin-left: 2px; }
 
 .app-input-wrap {
   position: relative;
@@ -73,35 +73,34 @@ export default {
 .app-input {
   width: 100%;
   padding: 0.9rem 1rem;
-  border: 1.5px solid rgba(45, 90, 39, 0.18);
-  border-radius: 1rem;
-  background: #fffdfa;
-  color: #1a1a18;
-  font-family: inherit;
-  font-size: 0.95rem;
+  border: 1.5px solid var(--oya-fog);
+  border-radius: var(--radius-md);
+  background: #FAFAF8;
+  color: var(--oya-char);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
   transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  outline: none;
 }
 
 .app-input:focus {
-  outline: none;
-  border-color: rgba(217, 95, 28, 0.55);
-  box-shadow: 0 0 0 4px rgba(217, 95, 28, 0.1);
+  border-color: rgba(217, 79, 30, 0.5);
+  box-shadow: 0 0 0 3px rgba(217, 79, 30, 0.08);
   background: #fff;
 }
 
 .app-input:disabled {
-  background: #f3f3f1;
-  color: #999;
+  background: var(--oya-bg);
+  color: var(--oya-silver);
   cursor: not-allowed;
 }
 
 .has-error .app-input {
-  border-color: rgba(185, 28, 28, 0.5);
+  border-color: rgba(217, 79, 30, 0.5);
 }
 
 .has-error .app-input:focus {
-  box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.1);
-  border-color: #b91c1c;
+  box-shadow: 0 0 0 3px rgba(217, 79, 30, 0.08);
 }
 
 .has-prefix .app-input { padding-left: 2.8rem; }
@@ -111,21 +110,21 @@ export default {
   position: absolute;
   display: flex;
   align-items: center;
-  color: #888;
+  color: var(--oya-silver);
   pointer-events: none;
 }
 .input-slot.prefix { left: 0.9rem; }
 .input-slot.suffix { right: 0.9rem; }
 
 .app-field-error {
-  font-size: 0.8rem;
-  color: #b91c1c;
+  font-size: 0.75rem;
+  color: var(--oya-ember);
   margin: 0;
 }
 
 .app-field-hint {
-  font-size: 0.8rem;
-  color: #7a8c78;
+  font-size: 0.75rem;
+  color: var(--oya-steel);
   margin: 0;
 }
 </style>

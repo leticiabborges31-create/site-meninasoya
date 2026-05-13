@@ -22,7 +22,7 @@ const router = createRouter({
     { path: '/parceria', name: 'parceria', component: Parceria },
     { path: '/coordenacao', name: 'coordenacao', component: Coordenacao },
     { path: '/atividades', name: 'atividades', component: AtividadeLista },
-    { path: '/atividade', name: 'atividade', component: AtividadeDetalhe }
+    { path: '/atividade/:id', name: 'atividade', component: AtividadeDetalhe }
   ]
 })
 

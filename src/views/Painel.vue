@@ -32,10 +32,23 @@
             <label>Descrição</label>
             <textarea v-model="descricao" placeholder="Descrição detalhada..." class="form-textarea" rows="4" required></textarea>
           </div>
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" v-model="temLocalizacao" class="checkbox-input" />
+              Tem localização?
+            </label>
+            <input
+              v-if="temLocalizacao"
+              v-model="localizacao"
+              type="text"
+              placeholder="Ex: UFMA-CCET, Sala 10"
+              class="form-input mt-sm"
+            />
+          </div>
           <div class="form-group full">
-            <label>Imagem</label>
+            <label>Imagem 1</label>
             <div class="file-upload">
-              <input type="file" @change="uploadImagem" accept="image/*" class="file-input" id="foto-atividade" />
+              <input type="file" @change="e => file = e.target.files[0]" accept="image/*" class="file-input" id="foto-atividade" />
               <label for="foto-atividade" class="file-label">
                 <svg class="icon-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -43,6 +56,20 @@
                   <line x1="12" y1="3" x2="12" y2="15"/>
                 </svg>
                 {{ file ? file.name : 'Clique para selecionar imagem' }}
+              </label>
+            </div>
+          </div>
+          <div class="form-group full">
+            <label>Imagem 2 (opcional)</label>
+            <div class="file-upload">
+              <input type="file" @change="e => file2 = e.target.files[0]" accept="image/*" class="file-input" id="foto2-atividade" />
+              <label for="foto2-atividade" class="file-label">
+                <svg class="icon-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                {{ file2 ? file2.name : 'Clique para selecionar segunda imagem' }}
               </label>
             </div>
           </div>
@@ -56,12 +83,23 @@
         </button>
       </form>
 
-      <div v-if="publicado" class="sucesso-msg">
-        <svg class="icon-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
-        Atividade salva com sucesso!
-      </div>
+      <transition name="fade">
+        <div v-if="publicado" class="sucesso-msg">
+          <svg class="icon-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Atividade publicada com sucesso! Ela já aparece na lista de atividades.
+        </div>
+      </transition>
+
+      <transition name="fade">
+        <div v-if="erroMsg" class="erro-msg">
+          <svg class="icon-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          {{ erroMsg }}
+        </div>
+      </transition>
     </div>
   </PainelShell>
 </template>
@@ -76,9 +114,13 @@ export default {
       titulo: '',
       dataNoticia: '',
       descricao: '',
+      temLocalizacao: false,
+      localizacao: '',
       file: null,
+      file2: null,
       publicado: false,
-      editando: false
+      editando: false,
+      erroMsg: ''
     }
   },
 
@@ -89,17 +131,15 @@ export default {
   },
 
   methods: {
-    uploadImagem(e) {
-      this.file = e.target.files[0]
-    },
-
     async publicar() {
       try {
         const formData = new FormData()
         formData.append("titulo", this.titulo)
         formData.append("descricao", this.descricao)
         formData.append("data", this.dataNoticia)
+        if (this.temLocalizacao && this.localizacao) formData.append("localizacao", this.localizacao)
         if (this.file) formData.append("foto", this.file)
+        if (this.file2) formData.append("foto2", this.file2)
 
         const token = localStorage.getItem("token")
         const response = await fetch("http://localhost:8080/atividades", {
@@ -109,18 +149,26 @@ export default {
         })
 
         if (!response.ok) {
-          const erro = await response.text()
-          throw new Error(erro || "Erro ao salvar")
+          const body = await response.json().catch(() => null)
+          const msg = body?.message || body?.error || "Erro ao salvar a atividade. Tente novamente."
+          this.erroMsg = msg
+          setTimeout(() => { this.erroMsg = '' }, 5000)
+          return
         }
 
+        this.erroMsg = ''
         this.publicado = true
-        setTimeout(() => { this.publicado = false }, 3000)
+        setTimeout(() => { this.publicado = false }, 4000)
         this.titulo = ''
         this.dataNoticia = ''
         this.descricao = ''
+        this.temLocalizacao = false
+        this.localizacao = ''
         this.file = null
+        this.file2 = null
       } catch (e) {
-        alert("Erro ao salvar: " + e.message)
+        this.erroMsg = "Erro de conexão: " + e.message
+        setTimeout(() => { this.erroMsg = '' }, 5000)
       }
     },
 
@@ -135,67 +183,24 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
-
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-.admin-wrapper {
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(240, 112, 48, 0.14), transparent 30%),
-    linear-gradient(180deg, #fff7f1 0%, #f7fbf5 100%);
-  color: #1a1a18;
-  font-family: inherit;
-}
-
-/* HEADER */
-.admin-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: rgba(26, 58, 22, 0.96);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.admin-header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1.4rem 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.header-titulo {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-}
-<style scoped>
 /* Estilos locais — wrapper/header/logout ficam no PainelShell */
-.icon-header { width: 2rem; height: 2rem; color: #f07030; }
+.icon-header { width: 1.75rem; height: 1.75rem; color: var(--oya-glow); }
 
 .icon-btn,
 .icon-secao,
 .icon-msg,
 .icon-file {
-  width: 1.15rem;
-  height: 1.15rem;
+  width: 1.1rem;
+  height: 1.1rem;
   flex-shrink: 0;
 }
 
 .secao-card {
-  background: rgba(255, 255, 255, 0.94);
-  border: 1px solid rgba(45, 90, 39, 0.1);
-  border-radius: 1.5rem;
+  background: #fff;
+  border: 0.5px solid var(--oya-fog);
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
-  box-shadow: 0 18px 45px rgba(26, 58, 22, 0.08);
+  box-shadow: 0 4px 24px rgba(26, 58, 42, 0.06);
 }
 
 .secao-header {
@@ -205,11 +210,12 @@ export default {
   margin-bottom: 1.25rem;
 }
 
-.icon-secao { color: #d95f1c; }
+.icon-secao { color: var(--oya-ember); }
 
 .secao-titulo {
-  font-size: 1.2rem;
-  color: #1a3a16;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--oya-forest);
 }
 
 .form-grid {
@@ -221,34 +227,54 @@ export default {
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: 0.4rem;
 }
 
 .form-group.full { grid-column: 1 / -1; }
 
 .form-group label {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #32502c;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--oya-stone);
 }
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem !important;
+  font-weight: 500;
+  color: var(--oya-stone);
+  cursor: pointer;
+}
+
+.checkbox-input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--oya-ember);
+  cursor: pointer;
+}
+
+.mt-sm { margin-top: 0.4rem; }
 
 .form-input,
 .form-textarea {
   width: 100%;
-  padding: 0.95rem 1rem;
-  border: 1px solid rgba(45, 90, 39, 0.14);
-  border-radius: 1rem;
-  background: #fffdfa;
-  color: #1a1a18;
-  font: inherit;
-  transition: 0.2s ease;
+  padding: 0.9rem 1rem;
+  border: 1.5px solid var(--oya-fog);
+  border-radius: var(--radius-md);
+  background: #FAFAF8;
+  color: var(--oya-char);
+  font-family: var(--font-body);
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
 }
 
 .form-input:focus,
 .form-textarea:focus {
-  outline: none;
-  border-color: rgba(217, 95, 28, 0.55);
-  box-shadow: 0 0 0 4px rgba(217, 95, 28, 0.1);
+  border-color: rgba(217, 79, 30, 0.5);
+  box-shadow: 0 0 0 3px rgba(217, 79, 30, 0.08);
   background: #fff;
 }
 
@@ -271,19 +297,20 @@ export default {
   gap: 0.65rem;
   width: 100%;
   min-height: 56px;
-  padding: 0.95rem 1rem;
-  border: 1.5px dashed rgba(217, 95, 28, 0.45);
-  border-radius: 1rem;
-  background: #fff6ef;
-  color: #8b4b22;
+  padding: 0.9rem 1rem;
+  border: 1.5px dashed rgba(217, 79, 30, 0.35);
+  border-radius: var(--radius-md);
+  background: var(--oya-sand);
+  color: var(--oya-stone);
   cursor: pointer;
-  transition: 0.2s ease;
-  font-family: inherit;
+  transition: background 0.2s, border-color 0.2s;
+  font-family: var(--font-body);
+  font-size: 14px;
 }
 
 .file-label:hover {
-  background: #fff0e5;
-  border-color: #d95f1c;
+  background: rgba(217, 79, 30, 0.06);
+  border-color: var(--oya-ember);
 }
 
 .btn-salvar {
@@ -292,35 +319,54 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 0.55rem;
-  padding: 0.95rem 1.25rem;
+  padding: 0.9rem 1.5rem;
   border: none;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #1a3a16, #2d5a27);
+  border-radius: var(--radius-pill);
+  background: var(--oya-ember);
   color: #fff;
-  font-weight: 700;
+  font-weight: 500;
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: 0.2s ease;
-  font-family: inherit;
-  font-size: 1rem;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  font-family: var(--font-body);
 }
 
 .btn-salvar:hover {
+  background: var(--oya-flame);
   transform: translateY(-1px);
-  box-shadow: 0 14px 30px rgba(26, 58, 22, 0.18);
+  box-shadow: 0 10px 28px rgba(217, 79, 30, 0.25);
 }
 
 .sucesso-msg {
   margin-top: 1rem;
-  display: inline-flex;
-  align-items: center;
+  display: flex;
+  align-items: flex-start;
   gap: 0.55rem;
-  padding: 0.85rem 1rem;
-  border-radius: 1rem;
-  background: #edf8ec;
-  border: 1px solid rgba(45, 90, 39, 0.16);
-  color: #1a3a16;
-  font-weight: 600;
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--radius-md);
+  background: rgba(107, 170, 138, 0.12);
+  border: 1px solid rgba(74, 122, 98, 0.25);
+  color: var(--oya-sage);
+  font-weight: 500;
+  font-size: 0.9rem;
 }
+
+.erro-msg {
+  margin-top: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--radius-md);
+  background: rgba(217, 79, 30, 0.08);
+  border: 1px solid rgba(217, 79, 30, 0.2);
+  color: var(--oya-ember);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 
 @media (max-width: 600px) {
   .form-grid { grid-template-columns: 1fr; }

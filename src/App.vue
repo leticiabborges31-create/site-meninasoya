@@ -2,7 +2,7 @@
   <div class="app-shell">
     <header class="navbar">
       <router-link to="/" class="brand">
-        <span class="brand-mark">MO</span>
+        <img src="@/assets/logo-oia.png" alt="Meninas Oyá" class="brand-logo" />
         <div class="brand-copy">
           <strong>Meninas Oya</strong>
           <span>Rede de apoio e protagonismo</span>
@@ -98,31 +98,25 @@ export default {
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  padding: 0.55rem 3.5rem;
-  background: rgba(255, 243, 231, 0.88);
+  padding: 0.6rem 3.5rem;
+  background: rgba(240, 237, 232, 0.92);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(121, 76, 42, 0.1);
+  border-bottom: 0.5px solid var(--oya-fog);
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.9rem;
-  color: #1f1b17;
+  gap: 0.75rem;
+  color: var(--oya-forest);
   text-decoration: none;
 }
 
-.brand-mark {
-  display: grid;
-  place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 0.75rem;
-  background: linear-gradient(135deg, #ff8a3d, #c84f1d);
-  color: #fff9f4;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  box-shadow: 0 14px 30px rgba(200, 79, 29, 0.24);
+.brand-logo {
+  width: 2.5rem;
+  height: 2.5rem;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
 }
 
 .brand-copy {
@@ -132,47 +126,51 @@ export default {
 
 .brand-copy strong {
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 500;
+  color: var(--oya-forest);
+  letter-spacing: -0.02em;
 }
 
 .brand-copy span {
-  color: #736152;
-  font-size: 0.75rem;
+  color: var(--oya-steel);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .menu {
   display: flex;
   align-items: center;
-  gap: 0.9rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
 .menu a {
-  padding: 0.5rem 0.85rem;
-  border-radius: 999px;
-  color: #3f3228;
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius-pill);
+  color: var(--oya-stone);
   text-decoration: none;
   font-size: 0.875rem;
-  font-weight: 600;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .menu a:hover,
 .menu a.router-link-active {
-  background: rgba(200, 79, 29, 0.1);
-  color: #b2481f;
+  background: rgba(217, 79, 30, 0.08);
+  color: var(--oya-ember);
 }
 
 .menu-cta {
-  background: linear-gradient(135deg, #20160f, #4b2d20);
-  color: #fff6f1 !important;
-  box-shadow: 0 14px 30px rgba(32, 22, 15, 0.18);
+  background: var(--oya-forest) !important;
+  color: var(--oya-cream) !important;
+  font-weight: 500;
 }
 
 .menu-cta:hover,
 .menu-cta.router-link-active {
-  background: linear-gradient(135deg, #ff8a3d, #c84f1d) !important;
-  color: #fffdfb !important;
+  background: var(--oya-ember) !important;
+  color: #fff !important;
 }
 
 @media (max-width: 980px) {
@@ -181,24 +179,12 @@ export default {
     flex-direction: column;
     align-items: stretch;
   }
-
-  .menu {
-    justify-content: center;
-  }
+  .menu { justify-content: center; }
 }
 
 @media (max-width: 640px) {
-  .brand {
-    justify-content: center;
-  }
-
-  .menu {
-    gap: 0.5rem;
-  }
-
-  .menu a {
-    flex: 1 1 calc(50% - 0.5rem);
-    text-align: center;
-  }
+  .brand { justify-content: center; }
+  .menu { gap: 0.5rem; }
+  .menu a { flex: 1 1 calc(50% - 0.5rem); text-align: center; }
 }
 </style>

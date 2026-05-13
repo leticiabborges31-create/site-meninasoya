@@ -113,25 +113,25 @@ export default {
 .atividades-wrapper {
   max-width: 800px;
   margin: 0 auto;
-  padding: 40px 20px;
-  font-family: 'Poppins', sans-serif;
+  padding: 3rem 1.25rem;
+  font-family: var(--font-body);
 }
 
 .atividades-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 2.5rem;
 }
 
 .atividades-titulo {
-  font-size: 36px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 8px;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--oya-forest);
+  margin-bottom: 0.5rem;
 }
 
 .atividades-subtitulo {
-  font-size: 16px;
-  color: #888;
+  font-size: 0.95rem;
+  color: var(--oya-steel);
 }
 
 /* LISTA */
@@ -143,17 +143,21 @@ export default {
 
 /* CARD */
 .card-atividade {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 12px rgba(26,58,42,0.06);
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-left: 5px solid #ff8a3d;
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+  border-left: 3px solid var(--oya-ember);
+  border-top: 0.5px solid var(--oya-fog);
+  border-right: 0.5px solid var(--oya-fog);
+  border-bottom: 0.5px solid var(--oya-fog);
 }
 
 .card-atividade:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  box-shadow: 0 12px 32px rgba(26,58,42,0.1);
+  border-left-color: var(--oya-flame);
 }
 
 /* IMAGEM */
@@ -176,9 +180,10 @@ export default {
 }
 
 .card-data {
-  font-size: 13px;
-  color: #ff8a3d;
-  font-weight: 600;
+  font-size: 0.75rem;
+  color: var(--oya-ember);
+  font-weight: 500;
+  letter-spacing: 0.04em;
 }
 
 /* AÇÕES */
@@ -199,33 +204,33 @@ export default {
 }
 
 .btn-editar:hover {
-  background: #fff3e0;
+  background: var(--oya-sand);
 }
 
 .btn-apagar:hover {
-  background: #fdecea;
+  background: rgba(217, 79, 30, 0.08);
 }
 
 .card-titulo {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 10px;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--oya-forest);
+  margin-bottom: 0.6rem;
 }
 
 .card-descricao {
-  font-size: 15px;
-  color: #555;
-  line-height: 1.6;
+  font-size: 0.9rem;
+  color: var(--oya-stone);
+  line-height: 1.65;
 }
 
 /* LOADING / VAZIO */
 .loading,
 .vazio {
   text-align: center;
-  padding: 60px 20px;
-  color: #888;
-  font-size: 16px;
+  padding: 4rem 1.25rem;
+  color: var(--oya-steel);
+  font-size: 0.95rem;
 }
 
 /* RESPONSIVO */
