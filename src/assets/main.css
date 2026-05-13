@@ -1,13 +1,133 @@
-/* ── RESET ───────────────────────────────────────────── */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@import './base.css';
+
+/* ── GLOBAL UTILITIES ────────────────────────────────── */
+
+/* Seção label */
+.secao-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--oya-ember);
+  background: rgba(217, 79, 30, 0.1);
+  padding: 0.3rem 0.9rem;
+  border-radius: var(--radius-pill);
+  margin-bottom: 1.25rem;
 }
 
+/* Botões globais */
+.btn-primary {
+  background: var(--oya-ember);
+  color: #fff;
+  padding: 0.85rem 1.75rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+  letter-spacing: 0.02em;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+}
+.btn-primary:hover {
+  background: var(--oya-flame);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(217, 79, 30, 0.28);
+}
+
+.btn-outline {
+  border: 1.5px solid rgba(245, 242, 236, 0.35);
+  color: var(--oya-cream);
+  padding: 0.85rem 1.75rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+  background: transparent;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+}
+.btn-outline:hover {
+  border-color: rgba(245, 242, 236, 0.7);
+  background: rgba(245, 242, 236, 0.08);
+}
+
+/* Form inputs globais */
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1.5px solid var(--oya-fog);
+  border-radius: var(--radius-md);
+  background: #FAFAF8;
+  color: var(--oya-char);
+  font-family: var(--font-body);
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+.form-input:focus,
+.form-textarea:focus {
+  border-color: rgba(217, 79, 30, 0.5);
+  box-shadow: 0 0 0 3px rgba(217, 79, 30, 0.1);
+  background: #fff;
+}
+.form-textarea { resize: vertical; min-height: 120px; }
+
+/* Rodapé padrão */
+.rodape {
+  background: var(--oya-deep);
+  padding: 2rem 4rem;
+}
+.rodape-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.rodape-marca {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.rodape-mo {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-sm);
+  background: var(--oya-ember);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: -0.03em;
+}
+.rodape-marca strong { color: var(--oya-cream); font-size: 0.9rem; display: block; }
+.rodape-marca span  { color: var(--oya-fern);  font-size: 0.75rem; display: block; }
+.rodape-copy { color: var(--oya-steel); font-size: 0.8rem; }
+
+@media (max-width: 600px) {
+  .rodape { padding: 2rem 1.25rem; }
+  .rodape-inner { flex-direction: column; text-align: center; }
+}
+
+/* ── LEGACY (kept for compat, override with scoped styles) ── */
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #fdfcfa;
+  font-family: var(--font-body);
+  background: var(--oya-bg);
   color: #1a1a18;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

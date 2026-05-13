@@ -241,9 +241,7 @@ export default {
 <style scoped>
 .cadastro-page {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top right, rgba(240, 112, 48, 0.12), transparent 35%),
-    linear-gradient(180deg, #fff7f1 0%, #f5fbf3 100%);
+  background: var(--oya-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -253,11 +251,11 @@ export default {
 .cadastro-card {
   width: 100%;
   max-width: 560px;
-  background: rgba(255, 255, 255, 0.96);
-  border: 1px solid rgba(45, 90, 39, 0.09);
-  border-radius: 1.75rem;
+  background: #fff;
+  border: 0.5px solid var(--oya-fog);
+  border-radius: var(--radius-lg);
   padding: 2.25rem 2.5rem;
-  box-shadow: 0 24px 60px rgba(26, 58, 22, 0.1);
+  box-shadow: 0 8px 40px rgba(15, 34, 24, 0.08);
 }
 
 /* Header */
@@ -272,28 +270,25 @@ export default {
   flex-shrink: 0;
   width: 3rem;
   height: 3rem;
-  border-radius: 1rem;
-  background: linear-gradient(135deg, #d95f1c, #f07030);
+  border-radius: var(--radius-md);
+  background: var(--oya-ember);
   display: grid;
   place-items: center;
-  box-shadow: 0 10px 24px rgba(217, 95, 28, 0.22);
+  box-shadow: 0 8px 20px rgba(217, 79, 30, 0.22);
 }
 
-.header-icon svg {
-  width: 1.4rem;
-  height: 1.4rem;
-  color: #fff;
-}
+.header-icon svg { width: 1.35rem; height: 1.35rem; color: #fff; }
 
 .card-titulo {
-  font-size: 1.4rem;
-  color: #1a3a16;
-  margin-bottom: 0.2rem;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  color: var(--oya-forest);
+  margin-bottom: 0.15rem;
 }
 
 .card-subtitulo {
   font-size: 0.875rem;
-  color: #6b7b69;
+  color: var(--oya-steel);
 }
 
 /* Feedback */
@@ -302,35 +297,29 @@ export default {
   align-items: flex-start;
   gap: 0.75rem;
   padding: 1rem 1.1rem;
-  border-radius: 1rem;
+  border-radius: var(--radius-md);
   margin-bottom: 1.5rem;
   font-size: 0.9rem;
 }
 
-.feedback svg {
-  width: 1.2rem;
-  height: 1.2rem;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
+.feedback svg { width: 1.2rem; height: 1.2rem; flex-shrink: 0; margin-top: 1px; }
 
 .sucesso-card {
-  background: #edf8ec;
-  border: 1px solid rgba(45, 90, 39, 0.14);
-  color: #1a3a16;
+  background: rgba(107, 170, 138, 0.1);
+  border: 0.5px solid rgba(74, 122, 98, 0.2);
+  color: var(--oya-sage);
 }
 
-.sucesso-card svg { color: #2d7a24; }
-
+.sucesso-card svg { color: var(--oya-fern); }
 .sucesso-card strong { display: block; margin-bottom: 0.2rem; }
 
 .erro-card {
-  background: #fdecea;
-  border: 1px solid rgba(185, 28, 28, 0.14);
-  color: #7f1d1d;
+  background: rgba(217, 79, 30, 0.06);
+  border: 0.5px solid rgba(217, 79, 30, 0.2);
+  color: var(--oya-ember);
 }
 
-.erro-card svg { color: #b91c1c; }
+.erro-card svg { color: var(--oya-ember); }
 
 /* Form grid */
 .form-grid {
@@ -339,15 +328,12 @@ export default {
   gap: 1rem;
 }
 
-.form-grid :deep(.full) {
-  grid-column: 1 / -1;
-}
-
+.form-grid :deep(.full) { grid-column: 1 / -1; }
 .full { grid-column: 1 / -1; }
 
 .divider {
   grid-column: 1 / -1;
-  border-top: 1px solid rgba(45, 90, 39, 0.08);
+  border-top: 0.5px solid var(--oya-fog);
   margin: 0.25rem 0;
 }
 
@@ -359,16 +345,12 @@ export default {
   padding: 0;
   display: flex;
   align-items: center;
-  color: #7a8c78;
+  color: var(--oya-silver);
   pointer-events: all;
 }
 
-.toggle-senha svg {
-  width: 1.1rem;
-  height: 1.1rem;
-}
-
-.toggle-senha:hover { color: #d95f1c; }
+.toggle-senha svg { width: 1.1rem; height: 1.1rem; }
+.toggle-senha:hover { color: var(--oya-ember); }
 
 .btn-submit { margin-top: 0.5rem; }
 
@@ -376,13 +358,13 @@ export default {
   grid-column: 1 / -1;
   text-align: center;
   font-size: 0.875rem;
-  color: #7a8c78;
+  color: var(--oya-steel);
   margin-top: -0.25rem;
 }
 
 .link-login a {
-  color: #d95f1c;
-  font-weight: 700;
+  color: var(--oya-ember);
+  font-weight: 500;
   text-decoration: none;
 }
 
@@ -393,15 +375,11 @@ export default {
 @media (max-width: 520px) {
   .cadastro-card {
     padding: 1.75rem 1.25rem;
-    border-radius: 1.25rem;
+    border-radius: var(--radius-md);
   }
 
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
+  .form-grid { grid-template-columns: 1fr; }
 
-  .form-grid :deep(.full) {
-    grid-column: 1;
-  }
+  .form-grid :deep(.full) { grid-column: 1; }
 }
 </style>

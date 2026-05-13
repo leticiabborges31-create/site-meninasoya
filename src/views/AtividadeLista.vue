@@ -12,6 +12,7 @@
         v-for="atividade in atividades"
         :key="atividade.id"
         class="card-atividade"
+        @click="abrirDetalhe(atividade.id)"
       >
         <img
           v-if="atividade.id"
@@ -24,13 +25,18 @@
         <div class="card-conteudo">
           <div class="card-topo">
             <span class="card-data">📅 {{ formatarData(atividade.data) }}</span>
-            <div class="card-acoes" v-if="isLogado">
+            <div class="card-acoes" v-if="isLogado" @click.stop>
               <button @click="editar(atividade)" class="btn-editar" title="Editar">✏️</button>
               <button @click="apagar(atividade.id)" class="btn-apagar" title="Apagar">🗑️</button>
             </div>
           </div>
           <h2 class="card-titulo">{{ atividade.titulo }}</h2>
-          <p class="card-descricao">{{ atividade.descricao }}</p>
+          <p class="card-descricao">{{ stripHtml(atividade.descricao) }}</p>
+          <div class="card-rodape">
+            <span v-if="atividade.professorNome" class="card-professor">👩‍🏫 {{ atividade.professorNome }}</span>
+            <span v-if="atividade.localizacao" class="card-local">📍 {{ atividade.localizacao }}</span>
+            <span class="card-ver-mais">Ver mais →</span>
+          </div>
         </div>
       </div>
     </div>
@@ -76,6 +82,15 @@ export default {
       return `${dia}/${mes}/${ano}`
     },
 
+    abrirDetalhe(id) {
+      this.$router.push(`/atividade/${id}`)
+    },
+
+    stripHtml(html) {
+      if (!html) return ''
+      return html.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').trim()
+    },
+
     editar(atividade) {
       localStorage.setItem("atividade_editando", JSON.stringify(atividade))
       this.$router.push("/painel")
@@ -103,45 +118,49 @@ export default {
 .atividades-wrapper {
   max-width: 800px;
   margin: 0 auto;
-  padding: 40px 20px;
-  font-family: 'Poppins', sans-serif;
+  padding: var(--space-xl) var(--space-md);
+  font-family: var(--font-body);
 }
 
 .atividades-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: var(--space-xl);
 }
 
 .atividades-titulo {
-  font-size: 36px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 8px;
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  color: var(--oya-forest);
+  margin-bottom: var(--space-sm);
 }
 
 .atividades-subtitulo {
-  font-size: 16px;
-  color: #888;
+  font-size: 1rem;
+  color: var(--oya-steel);
 }
 
 .lista-atividades {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-lg);
 }
 
 .card-atividade {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(15, 34, 24, 0.06);
   overflow: hidden;
-  border-left: 5px solid #ff8a3d;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-left: 4px solid var(--oya-ember);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card-atividade {
+  cursor: pointer;
 }
 
 .card-atividade:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(15, 34, 24, 0.1);
 }
 
 .card-imagem {
@@ -150,27 +169,22 @@ export default {
   object-fit: cover;
 }
 
-.card-conteudo {
-  padding: 24px;
-}
+.card-conteudo { padding: var(--space-lg); }
 
 .card-topo {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-sm);
 }
 
 .card-data {
-  font-size: 13px;
-  color: #ff8a3d;
-  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--oya-ember);
+  font-weight: 500;
 }
 
-.card-acoes {
-  display: flex;
-  gap: 8px;
-}
+.card-acoes { display: flex; gap: var(--space-sm); }
 
 .btn-editar,
 .btn-apagar {
@@ -179,36 +193,63 @@ export default {
   cursor: pointer;
   font-size: 18px;
   padding: 4px 8px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   transition: background 0.2s;
 }
 
-.btn-editar:hover { background: #fff3e0; }
-.btn-apagar:hover { background: #fdecea; }
+.btn-editar:hover { background: rgba(107, 170, 138, 0.12); }
+.btn-apagar:hover { background: rgba(217, 79, 30, 0.08); }
 
 .card-titulo {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 10px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--oya-forest);
+  margin-bottom: var(--space-sm);
 }
 
 .card-descricao {
-  font-size: 15px;
-  color: #555;
+  font-size: 0.9rem;
+  color: var(--oya-stone);
   line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-rodape {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.card-professor,
+.card-local {
+  font-size: 0.8rem;
+  color: var(--oya-steel);
+  background: var(--oya-fog, #f4f4f4);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-pill, 999px);
+}
+
+.card-ver-mais {
+  margin-left: auto;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--oya-ember);
 }
 
 .loading, .vazio {
   text-align: center;
   padding: 60px 20px;
-  color: #888;
-  font-size: 16px;
+  color: var(--oya-steel);
+  font-size: 1rem;
 }
 
 @media (max-width: 600px) {
-  .atividades-titulo { font-size: 26px; }
-  .card-conteudo { padding: 16px; }
-  .card-titulo { font-size: 17px; }
+  .atividades-titulo { font-size: 1.65rem; }
+  .card-conteudo { padding: var(--space-md); }
+  .card-titulo { font-size: 1.05rem; }
 }
 </style>

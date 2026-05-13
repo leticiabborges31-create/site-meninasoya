@@ -32,14 +32,14 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.9rem 1.5rem;
+  padding: 0.85rem 1.5rem;
   border: none;
-  border-radius: 999px;
-  font-family: inherit;
-  font-size: 0.95rem;
-  font-weight: 700;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, opacity 0.15s;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s, opacity 0.15s;
   white-space: nowrap;
 }
 
@@ -52,46 +52,48 @@ export default {
 
 .app-btn--full { width: 100%; }
 
-/* PRIMARY — dark green */
+/* PRIMARY — forest green */
 .app-btn--primary {
-  background: linear-gradient(135deg, #1a3a16, #2d5a27);
-  color: #fff8f1;
-  box-shadow: 0 8px 20px rgba(26, 58, 22, 0.18);
+  background: var(--oya-forest);
+  color: var(--oya-mint);
+  box-shadow: 0 6px 18px rgba(26, 58, 42, 0.18);
 }
 .app-btn--primary:not(:disabled):hover {
+  background: var(--oya-sage);
   transform: translateY(-2px);
-  box-shadow: 0 14px 30px rgba(26, 58, 22, 0.24);
+  box-shadow: 0 12px 28px rgba(26, 58, 42, 0.22);
 }
 
-/* SECONDARY — orange accent */
+/* SECONDARY — ember orange */
 .app-btn--secondary {
-  background: linear-gradient(135deg, #d95f1c, #f07030);
-  color: #fff8f1;
-  box-shadow: 0 8px 20px rgba(217, 95, 28, 0.2);
+  background: var(--oya-ember);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(217, 79, 30, 0.22);
 }
 .app-btn--secondary:not(:disabled):hover {
+  background: var(--oya-flame);
   transform: translateY(-2px);
-  box-shadow: 0 14px 30px rgba(217, 95, 28, 0.28);
+  box-shadow: 0 12px 28px rgba(217, 79, 30, 0.28);
 }
 
-/* DANGER — red */
+/* DANGER */
 .app-btn--danger {
-  background: #fff1ec;
-  color: #c95420;
-  border: 1px solid rgba(185, 28, 28, 0.15);
+  background: rgba(217, 79, 30, 0.08);
+  color: var(--oya-ember);
+  border: 0.5px solid rgba(217, 79, 30, 0.2);
 }
 .app-btn--danger:not(:disabled):hover {
-  background: #ffe4d8;
+  background: rgba(217, 79, 30, 0.14);
 }
 
 /* GHOST — outlined */
 .app-btn--ghost {
   background: transparent;
-  color: #32502c;
-  border: 1.5px solid rgba(45, 90, 39, 0.2);
+  color: var(--oya-sage);
+  border: 1.5px solid var(--oya-fog);
 }
 .app-btn--ghost:not(:disabled):hover {
-  background: rgba(45, 90, 39, 0.06);
+  background: rgba(74, 122, 98, 0.06);
 }
 
 /* Spinner */

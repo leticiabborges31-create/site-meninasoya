@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <PainelShell titulo="Painel Administrativo" @logout="logout">
     <template #icon>
       <svg class="icon-header" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -112,123 +112,202 @@
 
       <!-- ======= ABA ATIVIDADES ======= -->
       <div v-if="abaAtiva === 'atividades'">
+
+        <!-- LISTA DE ATIVIDADES -->
         <div class="secao-card">
           <div class="secao-header">
             <svg class="icon-secao" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="5" x2="12" y2="19"/>
-              <line x1="5" y1="12" x2="19" y2="12"/>
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M9 11h6M9 15h6"/>
             </svg>
-            <h2 class="secao-titulo">Nova Atividade</h2>
+            <h2 class="secao-titulo">Atividades</h2>
+            <button @click="mostrarFormAtividade = !mostrarFormAtividade" class="btn-novo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              {{ mostrarFormAtividade ? 'Cancelar' : 'Nova Atividade' }}
+            </button>
           </div>
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Título</label>
-              <input v-model="atividade.titulo" type="text" placeholder="Título da atividade" class="form-input" />
-            </div>
-            <div class="form-group">
-              <label>Data</label>
-              <input v-model="atividade.data" type="date" class="form-input" />
-            </div>
-            <div class="form-group full">
-              <label>Descrição</label>
-              <textarea v-model="atividade.descricao" placeholder="Descrição detalhada..." class="form-textarea" rows="4"></textarea>
-            </div>
-            <div class="form-group full">
-              <label>Imagem</label>
-              <div class="file-upload">
-                <input type="file" @change="e => atividade.foto = e.target.files[0]" accept="image/*" class="file-input" id="foto-atividade" />
-                <label for="foto-atividade" class="file-label">
-                  <svg class="icon-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                    <polyline points="17 8 12 3 7 8"/>
-                    <line x1="12" y1="3" x2="12" y2="15"/>
-                  </svg>
-                  {{ atividade.foto ? atividade.foto.name : 'Clique para selecionar imagem' }}
+
+          <!-- FORMULÁRIO COLAPSÁVEL -->
+          <div v-if="mostrarFormAtividade" class="form-bloco">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Título</label>
+                <input v-model="atividade.titulo" type="text" placeholder="Título da atividade" class="form-input" />
+              </div>
+              <div class="form-group">
+                <label>Data</label>
+                <input v-model="atividade.data" type="date" class="form-input" />
+              </div>
+              <div class="form-group full">
+                <label>Descrição</label>
+                <textarea v-model="atividade.descricao" placeholder="Descrição detalhada..." class="form-textarea" rows="4"></textarea>
+              </div>
+              <div class="form-group">
+                <label>Professor Responsável</label>
+                <select v-model="atividade.professorId" class="form-input">
+                  <option value="">Selecione um professor</option>
+                  <option v-for="p in professores" :key="p.id" :value="p.id">{{ p.nome }}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" v-model="atividade.temLocalizacao" class="checkbox-input" />
+                  Tem localização?
                 </label>
+                <input
+                  v-if="atividade.temLocalizacao"
+                  v-model="atividade.localizacao"
+                  type="text"
+                  placeholder="Ex: UFMA-CCET, Sala 10"
+                  class="form-input mt-sm"
+                />
+              </div>
+              <div class="form-group full">
+                <label>Imagem 1</label>
+                <div class="file-upload">
+                  <input type="file" @change="e => atividade.foto = e.target.files[0]" accept="image/*" class="file-input" id="foto-atividade" />
+                  <label for="foto-atividade" class="file-label">
+                    <svg class="icon-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    {{ atividade.foto ? atividade.foto.name : 'Clique para selecionar imagem' }}
+                  </label>
+                </div>
+              </div>
+              <div class="form-group full">
+                <label>Imagem 2 (opcional)</label>
+                <div class="file-upload">
+                  <input type="file" @change="e => atividade.foto2 = e.target.files[0]" accept="image/*" class="file-input" id="foto2-atividade" />
+                  <label for="foto2-atividade" class="file-label">
+                    <svg class="icon-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    {{ atividade.foto2 ? atividade.foto2.name : 'Clique para selecionar segunda imagem' }}
+                  </label>
+                </div>
               </div>
             </div>
+            <button @click="salvarAtividade" class="btn-salvar">
+              <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"/>
+                <polyline points="17 6 12 13 7 8"/>
+              </svg>
+              Publicar Atividade
+            </button>
+            <div v-if="sucessoAtividade" class="sucesso-msg">
+              <svg class="icon-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              Atividade salva com sucesso!
+            </div>
           </div>
-          <button @click="salvarAtividade" class="btn-salvar">
-            <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"/>
-              <polyline points="17 6 12 13 7 8"/>
+
+          <!-- TABELA DE ATIVIDADES -->
+          <div v-if="listaAtividades.length === 0 && !mostrarFormAtividade" class="vazio">
+            <svg class="icon-vazio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 11h6M9 15h6"/>
             </svg>
-            Publicar Atividade
-          </button>
-          <div v-if="sucessoAtividade" class="sucesso-msg">
-            <svg class="icon-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-            Atividade salva com sucesso!
+            Nenhuma atividade cadastrada.
           </div>
+          <table v-else-if="listaAtividades.length > 0" class="tabela">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Data</th>
+                <th>Professor</th>
+                <th>Localização</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="a in listaAtividades" :key="a.id">
+                <td>{{ a.titulo }}</td>
+                <td>{{ formatarData(a.data) }}</td>
+                <td>{{ a.professorNome || '—' }}</td>
+                <td>{{ a.localizacao || '—' }}</td>
+                <td>
+                  <button @click="deletarAtividade(a.id)" class="btn-apagar" title="Apagar">
+                    <svg class="icon-delete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
  
       <!-- ======= ABA ALUNOS ======= -->
       <div v-if="abaAtiva === 'alunos'">
-        <div class="secao-card">
-          <div class="secao-header">
-            <svg class="icon-secao" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="5" x2="12" y2="19"/>
-              <line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-            <h2 class="secao-titulo">Cadastrar Aluno</h2>
-          </div>
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Nome</label>
-              <input v-model="aluno.nome" type="text" placeholder="Nome completo" class="form-input" />
-            </div>
-            <div class="form-group">
-              <label>Idade</label>
-              <input v-model="aluno.idade" type="number" placeholder="Idade" class="form-input" />
-            </div>
-            <div class="form-group">
-              <label>UF</label>
-              <select v-model="aluno.uf" class="form-input">
-                <option value="">Selecione o estado</option>
-                <option value="MA">Maranhao</option>
-                <option value="SP">Sao Paulo</option>
-                <option value="CE">Ceara</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Escola</label>
-              <input v-model="aluno.escola" type="text" placeholder="Nome da escola" class="form-input" />
-            </div>
-          </div>
-          <button @click="salvarAluno" class="btn-salvar">
-            <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"/>
-              <polyline points="17 6 12 13 7 8"/>
-            </svg>
-            Cadastrar Aluno
-          </button>
-          <div v-if="sucessoAluno" class="sucesso-msg">
-            <svg class="icon-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-            Aluno cadastrado com sucesso!
-          </div>
-        </div>
- 
-        <!-- LISTA ALUNOS -->
+        <!-- LISTA DE ALUNOS -->
         <div class="secao-card">
           <div class="secao-header">
             <svg class="icon-secao" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="8" r="4"/>
               <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
             </svg>
-            <h2 class="secao-titulo">Lista de Alunos</h2>
+            <h2 class="secao-titulo">Alunos</h2>
+            <button @click="mostrarFormAluno = !mostrarFormAluno" class="btn-novo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              {{ mostrarFormAluno ? 'Cancelar' : 'Novo Aluno' }}
+            </button>
           </div>
-          <div v-if="alunos.length === 0" class="vazio">
+
+          <!-- FORMULÁRIO COLAPSÁVEL -->
+          <div v-if="mostrarFormAluno" class="form-bloco">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Nome</label>
+                <input v-model="aluno.nome" type="text" placeholder="Nome completo" class="form-input" />
+              </div>
+              <div class="form-group">
+                <label>Idade</label>
+                <input v-model="aluno.idade" type="number" placeholder="Idade" class="form-input" />
+              </div>
+              <div class="form-group">
+                <label>UF</label>
+                <select v-model="aluno.uf" class="form-input">
+                  <option value="">Selecione o estado</option>
+                  <option value="MA">Maranhao</option>
+                  <option value="SP">Sao Paulo</option>
+                  <option value="CE">Ceara</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Escola</label>
+                <input v-model="aluno.escola" type="text" placeholder="Nome da escola" class="form-input" />
+              </div>
+            </div>
+            <button @click="salvarAluno" class="btn-salvar">
+              <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"/>
+                <polyline points="17 6 12 13 7 8"/>
+              </svg>
+              Cadastrar Aluno
+            </button>
+            <div v-if="sucessoAluno" class="sucesso-msg">
+              <svg class="icon-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              Aluno cadastrado com sucesso!
+            </div>
+          </div>
+
+          <!-- TABELA DE ALUNOS -->
+          <div v-if="alunos.length === 0 && !mostrarFormAluno" class="vazio">
             <svg class="icon-vazio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="11" cy="11" r="8"/>
               <path d="m21 21-4.35-4.35"/>
             </svg>
             Nenhum aluno cadastrado.
           </div>
-          <table v-else class="tabela">
+          <table v-else-if="alunos.length > 0" class="tabela">
             <thead>
               <tr>
                 <th>Nome</th>
@@ -436,7 +515,7 @@ export default {
         { key: 'alunos', label: 'Alunos' },
         { key: 'professores', label: 'Professores' }
       ],
-      atividade: { titulo: '', data: '', descricao: '', foto: null },
+      atividade: { titulo: '', data: '', descricao: '', temLocalizacao: false, localizacao: '', foto: null, foto2: null, professorId: '' },
       aluno: { nome: '', idade: '', uf: '', escola: '' },
       professor: { email: '', cpf: '', senha: '', nome: '', idade: '', uf: '', escola: '', linkCurriculoLattes: '' },
       editando: { id: null, email: '', nome: '', idade: '', uf: '', escola: '', linkCurriculoLattes: '' },
@@ -449,6 +528,9 @@ export default {
       alunos: [],
       professores: [],
       pendentes: [],
+      listaAtividades: [],
+      mostrarFormAtividade: false,
+      mostrarFormAluno: false,
       sucessoAtividade: false,
       sucessoAluno: false,
       sucessoProfessor: false
@@ -463,6 +545,7 @@ export default {
     this.carregarAlunos()
     this.carregarProfessores()
     this.carregarPendentes()
+    this.carregarListaAtividades()
   },
 
   methods: {
@@ -494,13 +577,47 @@ export default {
     },
 
     // ATIVIDADES
+    async carregarListaAtividades() {
+      try {
+        const response = await fetch(`${API}/atividades`, {
+          headers: { "Authorization": `Bearer ${this.token()}` }
+        })
+        if (!response.ok) return
+        const dados = await response.json()
+        this.listaAtividades = dados.sort((a, b) => new Date(b.data || 0) - new Date(a.data || 0))
+      } catch (e) { console.error(e) }
+    },
+
+    formatarData(data) {
+      if (!data) return ''
+      const [ano, mes, dia] = data.split('-')
+      return `${dia}/${mes}/${ano}`
+    },
+
+    async deletarAtividade(id) {
+      const ok = await this.abrirConfirm({ titulo: 'Apagar atividade', mensagem: 'Tem certeza que deseja apagar esta atividade?', variante: 'danger', labelOk: 'Apagar' })
+      if (!ok) return
+      try {
+        const response = await fetch(`${API}/atividades/${id}`, {
+          method: 'DELETE',
+          headers: { "Authorization": `Bearer ${this.token()}` }
+        })
+        if (!response.ok) throw new Error(await response.text())
+        this.listaAtividades = this.listaAtividades.filter(a => a.id !== id)
+        this.mostrarToast('Atividade removida.')
+      } catch (e) { this.mostrarToast('Erro ao apagar: ' + e.message, 'erro') }
+    },
+
     async salvarAtividade() {
       try {
         const formData = new FormData()
         formData.append("titulo", this.atividade.titulo)
         formData.append("descricao", this.atividade.descricao)
         formData.append("data", this.atividade.data)
+        if (this.atividade.temLocalizacao && this.atividade.localizacao) formData.append("localizacao", this.atividade.localizacao)
         if (this.atividade.foto) formData.append("foto", this.atividade.foto)
+        if (this.atividade.foto2) formData.append("foto2", this.atividade.foto2)
+        if (this.atividade.professorId) formData.append("professorId", this.atividade.professorId)
 
         const response = await fetch(`${API}/atividades`, {
           method: "POST",
@@ -511,7 +628,9 @@ export default {
 
         this.sucessoAtividade = true
         setTimeout(() => { this.sucessoAtividade = false }, 3000)
-        this.atividade = { titulo: '', data: '', descricao: '', foto: null }
+        this.atividade = { titulo: '', data: '', descricao: '', temLocalizacao: false, localizacao: '', foto: null, foto2: null, professorId: '' }
+        this.mostrarFormAtividade = false
+        await this.carregarListaAtividades()
       } catch (e) {
         alert("Erro: " + e.message)
       }
@@ -546,6 +665,7 @@ export default {
         this.sucessoAluno = true
         setTimeout(() => { this.sucessoAluno = false }, 3000)
         this.aluno = { nome: '', idade: '', uf: '', escola: '' }
+        this.mostrarFormAluno = false
         await this.carregarAlunos()
       } catch (e) {
         alert("Erro: " + e.message)
@@ -727,7 +847,7 @@ export default {
 
 <style scoped>
 /* Estilos locais — wrapper/header/logout ficam no PainelShell */
-.icon-header { width: 2rem; height: 2rem; color: #f07030; }
+.icon-header { width: 1.75rem; height: 1.75rem; color: var(--oya-glow); }
 
 .icon-btn,
 .icon-aba,
@@ -737,53 +857,56 @@ export default {
 .icon-delete,
 .icon-link,
 .icon-vazio {
-  width: 1.15rem;
-  height: 1.15rem;
+  width: 1.1rem;
+  height: 1.1rem;
   flex-shrink: 0;
 }
 
+/* ── ABAS ────────────────────────────────────────────── */
 .abas {
   max-width: 1200px;
   margin: 0 auto;
   padding: 1.25rem 1.5rem 0;
   display: flex;
-  gap: 0.75rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
 .btn-aba {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.85rem 1.15rem;
-  border: 1px solid rgba(45, 90, 39, 0.12);
-  border-radius: 999px;
+  gap: 0.5rem;
+  padding: 0.75rem 1.1rem;
+  border: 0.5px solid var(--oya-fog);
+  border-radius: var(--radius-pill);
   background: #fff;
-  color: #32502c;
-  font-weight: 600;
+  color: var(--oya-stone);
+  font-weight: 500;
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: 0.2s ease;
-  box-shadow: 0 8px 20px rgba(26, 58, 22, 0.05);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  font-family: var(--font-body);
 }
 
 .btn-aba:hover {
-  transform: translateY(-1px);
-  border-color: rgba(217, 95, 28, 0.25);
+  border-color: rgba(217, 79, 30, 0.2);
+  color: var(--oya-ember);
 }
 
 .btn-aba.ativo {
-  background: linear-gradient(135deg, #d95f1c, #f07030);
+  background: var(--oya-ember);
   color: #fff;
   border-color: transparent;
-  box-shadow: 0 14px 30px rgba(217, 95, 28, 0.22);
+  box-shadow: 0 8px 22px rgba(217, 79, 30, 0.22);
 }
 
+/* ── SECAO CARD ──────────────────────────────────────── */
 .secao-card {
-  background: rgba(255, 255, 255, 0.94);
-  border: 1px solid rgba(45, 90, 39, 0.1);
-  border-radius: 1.5rem;
+  background: #fff;
+  border: 0.5px solid var(--oya-fog);
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
-  box-shadow: 0 18px 45px rgba(26, 58, 22, 0.08);
+  box-shadow: 0 4px 24px rgba(26, 58, 42, 0.06);
 }
 
 .secao-header {
@@ -793,23 +916,45 @@ export default {
   margin-bottom: 1.25rem;
 }
 
-.icon-secao {
-  width: 1.2rem;
-  height: 1.2rem;
-  color: #d95f1c;
+.btn-novo {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 1rem;
+  background: var(--oya-ember);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-novo:hover { background: var(--oya-char); }
+
+.form-bloco {
+  border-top: 1.5px solid var(--oya-fog);
+  padding-top: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 
+.icon-secao { width: 1.1rem; height: 1.1rem; color: var(--oya-ember); }
+
 .secao-titulo {
-  font-size: 1.2rem;
-  color: #1a3a16;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--oya-forest);
 }
 
 .secao-descricao {
   margin-bottom: 1rem;
-  color: #5f5a55;
+  color: var(--oya-stone);
   line-height: 1.6;
+  font-size: 0.9rem;
 }
 
+/* ── FORMULÁRIO ──────────────────────────────────────── */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -819,47 +964,60 @@ export default {
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: 0.4rem;
 }
 
-.form-group.full {
-  grid-column: 1 / -1;
-}
+.form-group.full { grid-column: 1 / -1; }
 
 .form-group label {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #32502c;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--oya-stone);
 }
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem !important;
+  font-weight: 500;
+  color: var(--oya-stone);
+  cursor: pointer;
+}
+
+.checkbox-input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--oya-ember);
+  cursor: pointer;
+}
+
+.mt-sm { margin-top: 0.4rem; }
 
 .form-input,
 .form-textarea {
   width: 100%;
-  padding: 0.95rem 1rem;
-  border: 1px solid rgba(45, 90, 39, 0.14);
-  border-radius: 1rem;
-  background: #fffdfa;
-  color: #1a1a18;
-  font: inherit;
-  transition: 0.2s ease;
+  padding: 0.9rem 1rem;
+  border: 1.5px solid var(--oya-fog);
+  border-radius: var(--radius-md);
+  background: #FAFAF8;
+  color: var(--oya-char);
+  font-family: var(--font-body);
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
 }
 
 .form-input:focus,
 .form-textarea:focus {
-  outline: none;
-  border-color: rgba(217, 95, 28, 0.55);
-  box-shadow: 0 0 0 4px rgba(217, 95, 28, 0.1);
+  border-color: rgba(217, 79, 30, 0.5);
+  box-shadow: 0 0 0 3px rgba(217, 79, 30, 0.08);
   background: #fff;
 }
 
-.form-textarea {
-  resize: vertical;
-  min-height: 130px;
-}
+.form-textarea { resize: vertical; min-height: 130px; }
 
-.file-upload {
-  position: relative;
-}
+.file-upload { position: relative; }
 
 .file-input {
   position: absolute;
@@ -873,18 +1031,20 @@ export default {
   gap: 0.65rem;
   width: 100%;
   min-height: 56px;
-  padding: 0.95rem 1rem;
-  border: 1.5px dashed rgba(217, 95, 28, 0.45);
-  border-radius: 1rem;
-  background: #fff6ef;
-  color: #8b4b22;
+  padding: 0.9rem 1rem;
+  border: 1.5px dashed rgba(217, 79, 30, 0.35);
+  border-radius: var(--radius-md);
+  background: var(--oya-sand);
+  color: var(--oya-stone);
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: background 0.2s, border-color 0.2s;
+  font-family: var(--font-body);
+  font-size: 14px;
 }
 
 .file-label:hover {
-  background: #fff0e5;
-  border-color: #d95f1c;
+  background: rgba(217, 79, 30, 0.06);
+  border-color: var(--oya-ember);
 }
 
 .btn-salvar {
@@ -893,19 +1053,22 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 0.55rem;
-  padding: 0.95rem 1.25rem;
+  padding: 0.9rem 1.5rem;
   border: none;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #1a3a16, #2d5a27);
+  border-radius: var(--radius-pill);
+  background: var(--oya-ember);
   color: #fff;
-  font-weight: 700;
+  font-weight: 500;
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  font-family: var(--font-body);
 }
 
 .btn-salvar:hover {
+  background: var(--oya-flame);
   transform: translateY(-1px);
-  box-shadow: 0 14px 30px rgba(26, 58, 22, 0.18);
+  box-shadow: 0 10px 26px rgba(217, 79, 30, 0.25);
 }
 
 .sucesso-msg {
@@ -913,67 +1076,67 @@ export default {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  padding: 0.85rem 1rem;
-  border-radius: 1rem;
-  background: #edf8ec;
-  border: 1px solid rgba(45, 90, 39, 0.16);
-  color: #1a3a16;
-  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  background: rgba(107, 170, 138, 0.1);
+  border: 0.5px solid rgba(74, 122, 98, 0.2);
+  color: var(--oya-sage);
+  font-weight: 500;
+  font-size: 0.875rem;
 }
 
+/* ── TABELA ──────────────────────────────────────────── */
 .vazio {
   padding: 2rem 1rem;
   text-align: center;
-  color: #666;
+  color: var(--oya-steel);
   display: grid;
   justify-items: center;
   gap: 0.75rem;
+  font-size: 0.9rem;
 }
 
-.icon-vazio {
-  width: 1.6rem;
-  height: 1.6rem;
-  color: #d95f1c;
-}
+.icon-vazio { width: 1.6rem; height: 1.6rem; color: var(--oya-ember); }
 
 .tabela {
   width: 100%;
   border-collapse: collapse;
-  overflow: hidden;
 }
 
 .tabela thead th {
   text-align: left;
-  font-size: 0.82rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #6a5f58;
-  padding: 0 0 0.9rem;
-  border-bottom: 1px solid rgba(45, 90, 39, 0.12);
+  letter-spacing: 0.06em;
+  color: var(--oya-steel);
+  padding: 0 0 0.85rem;
+  border-bottom: 0.5px solid var(--oya-fog);
+  font-weight: 500;
 }
 
 .tabela tbody td {
-  padding: 1rem 0.25rem 1rem 0;
-  border-bottom: 1px solid rgba(45, 90, 39, 0.08);
-  color: #2a2a28;
+  padding: 0.9rem 0.25rem 0.9rem 0;
+  border-bottom: 0.5px solid var(--oya-fog);
+  color: var(--oya-char);
   vertical-align: middle;
+  font-size: 0.875rem;
 }
 
 .btn-apagar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.4rem;
-  height: 2.4rem;
+  width: 2.2rem;
+  height: 2.2rem;
   border: none;
-  border-radius: 999px;
-  background: #fff1ec;
-  color: #c95420;
+  border-radius: var(--radius-pill);
+  background: rgba(217, 79, 30, 0.08);
+  color: var(--oya-ember);
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: background 0.2s;
 }
 
-.btn-apagar:hover { background: #ffe4d8; }
+.btn-apagar:hover { background: rgba(217, 79, 30, 0.14); }
 
 .acoes { display: flex; gap: 0.4rem; align-items: center; }
 
@@ -981,36 +1144,38 @@ export default {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.4rem;
-  height: 2.4rem;
+  width: 2.2rem;
+  height: 2.2rem;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: background 0.2s;
 }
 
-.btn-editar { background: #eef5ec; color: #2d5a27; }
-.btn-editar:hover { background: #d8eed3; }
-.btn-senha { background: #fffbe6; color: #a06800; }
-.btn-senha:hover { background: #fff3b0; }
+.btn-editar { background: rgba(74, 122, 98, 0.1); color: var(--oya-sage); }
+.btn-editar:hover { background: rgba(74, 122, 98, 0.18); }
+.btn-senha  { background: rgba(255, 176, 138, 0.15); color: var(--oya-ember); }
+.btn-senha:hover  { background: rgba(255, 176, 138, 0.25); }
 
 .badge-status {
   display: inline-block;
-  padding: 0.25rem 0.65rem;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.7rem;
+  font-weight: 500;
   text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
-.badge-status.aprovado { background: #e8f5e4; color: #2d5a27; }
-.badge-status.pendente { background: #fff8e1; color: #a06800; }
-.badge-status.rejeitado { background: #fdecea; color: #b71c1c; }
 
-/* MODAL */
+.badge-status.aprovado  { background: rgba(107, 170, 138, 0.12); color: var(--oya-sage); }
+.badge-status.pendente  { background: rgba(255, 176, 138, 0.15); color: var(--oya-ember); }
+.badge-status.rejeitado { background: rgba(217, 79, 30, 0.1);    color: var(--oya-ember); }
+
+/* ── MODAL ───────────────────────────────────────────── */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(10, 20, 8, 0.55);
+  background: rgba(15, 34, 24, 0.6);
   backdrop-filter: blur(4px);
   z-index: 200;
   display: flex;
@@ -1021,11 +1186,12 @@ export default {
 
 .modal-card {
   background: #fff;
-  border-radius: 1.5rem;
+  border-radius: var(--radius-lg);
   padding: 2rem;
   width: 100%;
   max-width: 640px;
-  box-shadow: 0 24px 60px rgba(26, 58, 22, 0.18);
+  box-shadow: 0 32px 80px rgba(15, 34, 24, 0.22);
+  border: 0.5px solid var(--oya-fog);
 }
 
 .modal-card--sm { max-width: 420px; }
@@ -1038,26 +1204,28 @@ export default {
 }
 
 .modal-header h3 {
-  font-size: 1.2rem;
-  color: #1a3a16;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--oya-forest);
 }
 
 .modal-fechar {
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   line-height: 1;
-  color: #888;
+  color: var(--oya-silver);
   cursor: pointer;
   padding: 0 0.25rem;
+  font-family: var(--font-body);
 }
 
-.modal-fechar:hover { color: #c95420; }
+.modal-fechar:hover { color: var(--oya-ember); }
 
 .modal-subtitulo {
   margin-bottom: 1rem;
-  color: #555;
-  font-size: 0.95rem;
+  color: var(--oya-stone);
+  font-size: 0.9rem;
 }
 
 .modal-footer {
@@ -1068,80 +1236,78 @@ export default {
 }
 
 .btn-cancelar {
-  padding: 0.85rem 1.25rem;
-  border: 1px solid rgba(45, 90, 39, 0.15);
-  border-radius: 999px;
+  padding: 0.8rem 1.25rem;
+  border: 0.5px solid var(--oya-fog);
+  border-radius: var(--radius-pill);
   background: #fff;
-  color: #555;
-  font-weight: 600;
+  color: var(--oya-stone);
+  font-weight: 500;
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: 0.2s ease;
-  font-family: inherit;
+  transition: background 0.2s;
+  font-family: var(--font-body);
 }
 
-.btn-cancelar:hover { background: #f3f3f1; }
+.btn-cancelar:hover { background: var(--oya-bg); }
 
 .link-lattes {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  color: #d95f1c;
-  font-weight: 700;
+  color: var(--oya-ember);
+  font-weight: 500;
 }
+.link-lattes:hover { text-decoration: underline; }
 
-.link-lattes:hover {
-  text-decoration: underline;
-}
-
-/* ── MODAL CONFIRMⅠÇÃO ───────────────────────────── */
-.modal-confirm { text-align: center; padding: 2.25rem 2rem; }
+/* ── MODAL CONFIRMAÇÃO ───────────────────────────────── */
+.modal-confirm { text-align: center; padding: 2rem; }
 
 .confirm-icon {
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 3.2rem;
+  height: 3.2rem;
   border-radius: 50%;
   display: grid;
   place-items: center;
-  margin: 0 auto 1.25rem;
+  margin: 0 auto 1.1rem;
 }
 
-.confirm-icon svg { width: 1.5rem; height: 1.5rem; }
+.confirm-icon svg { width: 1.4rem; height: 1.4rem; }
 
-.confirm-icon.danger  { background: #fdecea; color: #c62828; }
-.confirm-icon.success { background: #e8f5e4; color: #2d5a27; }
-.confirm-icon.warning { background: #fff8e1; color: #a06800; }
+.confirm-icon.danger  { background: rgba(217, 79, 30, 0.1); color: var(--oya-ember); }
+.confirm-icon.success { background: rgba(107, 170, 138, 0.12); color: var(--oya-sage); }
+.confirm-icon.warning { background: rgba(255, 176, 138, 0.15); color: var(--oya-ember); }
 
 .confirm-titulo {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #1a3a16;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--oya-forest);
   margin: 0 0 0.5rem;
 }
 
 .confirm-mensagem {
-  font-size: 0.9rem;
-  color: #6a5f58;
+  font-size: 0.88rem;
+  color: var(--oya-steel);
   margin: 0;
   line-height: 1.5;
 }
 
 .btn-confirm {
-  padding: 0.85rem 1.5rem;
+  padding: 0.8rem 1.5rem;
   border: none;
-  border-radius: 999px;
-  font-weight: 700;
-  font-size: 0.9rem;
+  border-radius: var(--radius-pill);
+  font-weight: 500;
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: 0.2s ease;
-  font-family: inherit;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  font-family: var(--font-body);
 }
 
-.btn-confirm.danger  { background: linear-gradient(135deg, #c62828, #e53935); color: #fff; }
-.btn-confirm.success { background: linear-gradient(135deg, #1a3a16, #2d5a27); color: #fff; }
-.btn-confirm.warning { background: linear-gradient(135deg, #d95f1c, #f07030); color: #fff; }
-.btn-confirm:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+.btn-confirm.danger  { background: var(--oya-ember); color: #fff; }
+.btn-confirm.success { background: var(--oya-forest); color: #fff; }
+.btn-confirm.warning { background: var(--oya-ember); color: #fff; }
+.btn-confirm:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
 
-/* ── TOAST ───────────────────────────────────────── */
+/* ── TOAST ───────────────────────────────────────────── */
 .toast {
   position: fixed;
   bottom: 2rem;
@@ -1150,33 +1316,33 @@ export default {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.85rem 1.5rem;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 0.9rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--radius-pill);
+  font-weight: 500;
+  font-size: 0.875rem;
   z-index: 999;
-  box-shadow: 0 8px 28px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.18);
   white-space: nowrap;
 }
 
 .toast svg { width: 1rem; height: 1rem; flex-shrink: 0; }
-.toast.sucesso { background: #1a3a16; color: #d4f0cc; }
-.toast.erro    { background: #c62828; color: #fde8e8; }
+.toast.sucesso { background: var(--oya-forest); color: var(--oya-mint); }
+.toast.erro    { background: var(--oya-ember);  color: #fff; }
 
-.toast-fade-enter-active, .toast-fade-leave-active { transition: opacity 0.3s ease, transform 0.3s ease; }
+.toast-fade-enter-active, .toast-fade-leave-active { transition: opacity 0.3s, transform 0.3s; }
 .toast-fade-enter-from, .toast-fade-leave-to { opacity: 0; transform: translateX(-50%) translateY(12px); }
 
-/* ── PENDENTES (cards) ──────────────────────────────── */
+/* ── PENDENTES ───────────────────────────────────────── */
 .badge-count {
   margin-left: auto;
-  min-width: 1.6rem;
-  height: 1.6rem;
-  padding: 0 0.45rem;
-  background: linear-gradient(135deg, #d95f1c, #f07030);
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.4rem;
+  background: var(--oya-ember);
   color: #fff;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 700;
+  border-radius: var(--radius-pill);
+  font-size: 0.72rem;
+  font-weight: 500;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1193,16 +1359,16 @@ export default {
   align-items: center;
   gap: 1rem;
   padding: 1rem 1.15rem;
-  border: 1px solid rgba(45, 90, 39, 0.1);
-  border-radius: 1.1rem;
-  background: #fdfcfa;
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  border: 0.5px solid var(--oya-fog);
+  border-radius: var(--radius-md);
+  background: #fff;
+  transition: box-shadow 0.2s, border-color 0.2s;
   flex-wrap: wrap;
 }
 
 .pendente-card:hover {
-  border-color: rgba(217, 95, 28, 0.2);
-  box-shadow: 0 6px 20px rgba(217, 95, 28, 0.08);
+  border-color: rgba(217, 79, 30, 0.2);
+  box-shadow: 0 6px 20px rgba(217, 79, 30, 0.06);
 }
 
 .pendente-info {
@@ -1215,13 +1381,13 @@ export default {
 
 .pendente-avatar {
   flex-shrink: 0;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.25rem;
+  height: 2.25rem;
   border-radius: 50%;
-  background: linear-gradient(135deg, #2d5a27, #1a3a16);
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 700;
+  background: var(--oya-forest);
+  color: var(--oya-mint);
+  font-size: 0.9rem;
+  font-weight: 500;
   display: grid;
   place-items: center;
 }
@@ -1229,9 +1395,9 @@ export default {
 .pendente-dados { min-width: 0; }
 
 .pendente-nome {
-  font-weight: 700;
-  color: #1a3a16;
-  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--oya-forest);
+  font-size: 0.9rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1239,8 +1405,8 @@ export default {
 }
 
 .pendente-email {
-  font-size: 0.82rem;
-  color: #6a5f58;
+  font-size: 0.78rem;
+  color: var(--oya-steel);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1258,25 +1424,24 @@ export default {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  padding: 0.3rem 0.65rem;
-  background: #f3f0ec;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  color: #4a4540;
+  padding: 0.25rem 0.6rem;
+  background: var(--oya-bg);
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  color: var(--oya-stone);
   font-weight: 500;
   text-decoration: none;
 }
 
-.meta-chip svg { width: 0.85rem; height: 0.85rem; flex-shrink: 0; }
+.meta-chip svg { width: 0.8rem; height: 0.8rem; flex-shrink: 0; }
 
 .meta-chip--link {
-  background: #fff4ec;
-  color: #c95420;
-  font-weight: 600;
+  background: rgba(217, 79, 30, 0.08);
+  color: var(--oya-ember);
 }
 
 .meta-chip--link:hover {
-  background: #ffe8d8;
+  background: rgba(217, 79, 30, 0.14);
   text-decoration: underline;
 }
 
@@ -1291,326 +1456,51 @@ export default {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.55rem 1rem;
+  padding: 0.5rem 1rem;
   border: none;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 700;
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: 0.2s ease;
-  font-family: inherit;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  font-family: var(--font-body);
 }
 
 .btn-aprovar svg,
-.btn-rejeitar svg { width: 0.9rem; height: 0.9rem; flex-shrink: 0; }
+.btn-rejeitar svg { width: 0.85rem; height: 0.85rem; flex-shrink: 0; }
 
 .btn-aprovar {
-  background: linear-gradient(135deg, #1a3a16, #2d5a27);
-  color: #fff;
+  background: var(--oya-forest);
+  color: var(--oya-mint);
 }
 
 .btn-aprovar:hover {
+  background: var(--oya-sage);
   transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(26, 58, 22, 0.18);
 }
 
 .btn-rejeitar {
-  background: #fff1ec;
-  color: #c95420;
+  background: rgba(217, 79, 30, 0.08);
+  color: var(--oya-ember);
 }
 
 .btn-rejeitar:hover {
-  background: #ffe4d8;
+  background: rgba(217, 79, 30, 0.14);
   transform: translateY(-1px);
 }
 
+@media (max-width: 900px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .tabela { display: block; overflow-x: auto; }
+}
+
 @media (max-width: 640px) {
+  .abas { padding-left: 1rem; padding-right: 1rem; }
+  .btn-aba, .btn-salvar { width: 100%; justify-content: center; }
+  .secao-card { padding: 1.1rem; }
   .pendente-card { flex-direction: column; align-items: flex-start; }
   .pendente-info { flex: unset; width: 100%; }
   .pendente-acoes { width: 100%; }
   .btn-aprovar, .btn-rejeitar { flex: 1; justify-content: center; }
-}
-
-/* ── PAINEL ADMIN ────────────────────────────────────── */
-.painel-container {
-  max-width: 600px;
-  margin: 60px auto;
-  padding: 40px;
-  background: #f5f5f5;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.titulo-painel {
-  text-align: center;
-  color: #d95f1c;
-  margin-bottom: 30px;
-  font-size: 28px;
-}
-
-.formulario {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.formulario label {
-  font-weight: bold;
-  color: #444;
-  margin-top: 10px;
-}
-
-.formulario input,
-.formulario textarea {
-  padding: 12px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-  background: white;
-}
-
-.formulario textarea {
-  min-height: 120px;
-  resize: none;
-}
-
-.botoes {
-  display: flex;
-  gap: 15px;
-  margin-top: 25px;
-}
-
-.btn-salvar {
-  flex: 1;
-  padding: 12px;
-  background: #dcdcdc;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.btn-publicar {
-  flex: 1;
-  padding: 12px;
-  background: #d95f1c;
-  border: none;
-  border-radius: 6px;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.btn-publicar:hover { background: #b84e17; }
-.btn-salvar:hover { background: #cfcfcf; }
-
-.mensagem-sucesso {
-  margin-top: 25px;
-  text-align: center;
-}
-
-.btn-voltar {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background: #d95f1c;
-  border: none;
-  border-radius: 6px;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-/* ── AUTH ────────────────────────────────────────────── */
-.auth-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: #f0f5ef;
-}
-
-.auth-box {
-  width: 100%;
-  max-width: 420px;
-  background: white;
-  padding: 40px;
-  border-radius: 16px;
-  border: 2px solid #2d5a27;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-  text-align: center;
-  transition: 0.3s;
-}
-
-.auth-box:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.12);
-}
-
-.auth-box h2 {
-  color: #2d5a27;
-  margin-bottom: 20px;
-  font-weight: 600;
-}
-
-.auth-box input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-  outline: none;
-  transition: 0.3s;
-}
-
-.auth-box input:focus {
-  border-color: #d95f1c;
-  box-shadow: 0 0 8px rgba(217, 95, 28, 0.3);
-}
-
-.auth-btn {
-  width: 100%;
-  padding: 14px;
-  background: #d95f1c;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 15px;
-  transition: 0.3s;
-}
-
-.auth-btn:hover {
-  background: #b84e17;
-  transform: scale(1.03);
-}
-
-.auth-box button {
-  margin-top: 10px;
-  background: none;
-  border: none;
-  color: #d95f1c;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.auth-box button:hover { text-decoration: underline; }
-
-.auth-box hr {
-  margin: 25px 0;
-  border: none;
-  height: 1px;
-  background: #eee;
-}
-
-/* ── LISTA DE ATIVIDADES (admin) ─────────────────────── */
-.lista-container {
-  max-width: 800px;
-  margin: 60px auto;
-  padding: 20px;
-}
-
-.lista-atividades {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.card-atividade {
-  padding: 20px 25px;
-  border-radius: 14px;
-  border-left: 6px solid #d95f1c;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: all 0.3s ease;
-  background: white;
-}
-
-.card-atividade:hover {
-  transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 12px 28px rgba(0,0,0,0.12);
-  border-left-color: #b84e17;
-}
-
-.conteudo {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-width: 75%;
-}
-
-.conteudo strong {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1a3a16;
-}
-
-.conteudo p {
-  font-size: 14px;
-  color: #666;
-  line-height: 1.4;
-}
-
-.data {
-  font-size: 12px;
-  color: #999;
-  margin-top: 5px;
-}
-
-.acoes {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.icone {
-  width: 22px;
-  height: 22px;
-  cursor: pointer;
-  transition: 0.2s;
-  opacity: 0.7;
-}
-
-.icone:hover {
-  transform: scale(1.2);
-  opacity: 1;
-}
-
-@media (max-width: 900px) {
-  .admin-header-content {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .tabela {
-    display: block;
-    overflow-x: auto;
-  }
-}
-
-@media (max-width: 640px) {
-  .abas {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
-  .btn-aba,
-  .btn-salvar {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .secao-card {
-    padding: 1.1rem;
-  }
 }
 </style>
