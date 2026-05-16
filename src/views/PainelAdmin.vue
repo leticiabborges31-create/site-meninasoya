@@ -7,13 +7,12 @@
     </template>
 
     <!-- ABAS -->
-    <template #tabs>
-    <div class="abas">
+    <template #nav>
       <button
         v-for="aba in abas"
         :key="aba.key"
         @click="abaAtiva = aba.key"
-        :class="['btn-aba', { ativo: abaAtiva === aba.key }]"
+        :class="['nav-item', { ativo: abaAtiva === aba.key }]"
       >
         <svg class="icon-aba" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <g v-if="aba.key === 'pendentes'">
@@ -34,10 +33,14 @@
             <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
             <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
           </g>
+          <g v-if="aba.key === 'escolas'">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </g>
         </svg>
-        {{ aba.label }}
+        <span class="nav-label">{{ aba.label }}</span>
+        <span v-if="aba.key === 'pendentes' && pendentes.length > 0" class="nav-badge">{{ pendentes.length }}</span>
       </button>
-    </div>
     </template>
 
       <!-- ======= ABA PENDENTES ======= -->
@@ -274,14 +277,15 @@
                 <label>UF</label>
                 <select v-model="aluno.uf" class="form-input">
                   <option value="">Selecione o estado</option>
-                  <option value="MA">Maranhao</option>
-                  <option value="SP">Sao Paulo</option>
-                  <option value="CE">Ceara</option>
+                  <option v-for="uf in ufs" :key="uf" :value="uf">{{ uf }}</option>
                 </select>
               </div>
               <div class="form-group">
                 <label>Escola</label>
-                <input v-model="aluno.escola" type="text" placeholder="Nome da escola" class="form-input" />
+                <select v-model="aluno.escolaId" class="form-input">
+                  <option value="">Selecione a escola</option>
+                  <option v-for="e in escolas" :key="e.id" :value="e.id">{{ e.nome }} ({{ e.uf }})</option>
+                </select>
               </div>
             </div>
             <button @click="salvarAluno" class="btn-salvar">
@@ -322,7 +326,7 @@
                 <td>{{ a.nome }}</td>
                 <td>{{ a.idade }}</td>
                 <td>{{ a.uf }}</td>
-                <td>{{ a.escola }}</td>
+                <td>{{ a.escola?.nome || '—' }}</td>
                 <td>
                   <button @click="deletarAluno(a.id)" class="btn-apagar" title="Apagar">
                     <svg class="icon-delete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -401,6 +405,154 @@
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- ======= ABA ESCOLAS ======= -->
+      <div v-if="abaAtiva === 'escolas'">
+        <div class="secao-card">
+          <div class="secao-header">
+            <svg class="icon-secao" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <h2 class="secao-titulo">Escolas e Universidades</h2>
+            <button @click="mostrarFormEscola = !mostrarFormEscola" class="btn-novo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              {{ mostrarFormEscola ? 'Cancelar' : 'Nova Escola' }}
+            </button>
+          </div>
+
+          <!-- FORMULÁRIO COLAPSÁVEL -->
+          <div v-if="mostrarFormEscola" class="form-bloco">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Nome</label>
+                <input v-model="escola.nome" type="text" placeholder="Ex: UFMA" class="form-input" />
+              </div>
+              <div class="form-group">
+                <label>Tipo</label>
+                <select v-model="escola.tipo" class="form-input">
+                  <option value="">Selecione o tipo</option>
+                  <option value="ESCOLA_PUBLICA">Escola Pública</option>
+                  <option value="ESCOLA_PRIVADA">Escola Privada</option>
+                  <option value="UNIVERSIDADE">Universidade</option>
+                  <option value="INSTITUTO">Instituto Federal</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Cidade</label>
+                <input v-model="escola.cidade" type="text" placeholder="Ex: São Luís" class="form-input" />
+              </div>
+              <div class="form-group">
+                <label>UF</label>
+                <select v-model="escola.uf" class="form-input">
+                  <option value="">Selecione</option>
+                  <option v-for="uf in ufs" :key="uf" :value="uf">{{ uf }}</option>
+                </select>
+              </div>
+              <div class="form-group full">
+                <label>E-mail de contato (opcional)</label>
+                <input v-model="escola.emailContato" type="email" placeholder="contato@escola.edu.br" class="form-input" />
+              </div>
+            </div>
+            <button @click="salvarEscola" class="btn-salvar">
+              <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"/>
+                <polyline points="17 6 12 13 7 8"/>
+              </svg>
+              Cadastrar Escola
+            </button>
+          </div>
+
+          <!-- TABELA DE ESCOLAS -->
+          <div v-if="escolas.length === 0 && !mostrarFormEscola" class="vazio">
+            <svg class="icon-vazio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            </svg>
+            Nenhuma escola cadastrada.
+          </div>
+          <table v-else-if="escolas.length > 0" class="tabela">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th>Cidade</th>
+                <th>UF</th>
+                <th>Alunas</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="e in escolas" :key="e.id">
+                <td>{{ e.nome }}</td>
+                <td>{{ tipoLabel(e.tipo) }}</td>
+                <td>{{ e.cidade }}</td>
+                <td>{{ e.uf }}</td>
+                <td>
+                  <span class="badge-count">{{ e.totalAlunos }}</span>
+                </td>
+                <td class="acoes">
+                  <button @click="abrirEditarEscola(e)" class="btn-acao btn-editar" title="Editar">
+                    <svg class="icon-delete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
+                  <button @click="deletarEscola(e.id)" class="btn-apagar" title="Apagar">
+                    <svg class="icon-delete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MODAL EDITAR ESCOLA -->
+      <div v-if="modalEdicaoEscola" class="modal-overlay" @click.self="modalEdicaoEscola = false">
+        <div class="modal-card">
+          <div class="modal-header">
+            <h3>Editar Escola</h3>
+            <button @click="modalEdicaoEscola = false" class="modal-fechar">&times;</button>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nome</label>
+              <input v-model="editandoEscola.nome" type="text" class="form-input" />
+            </div>
+            <div class="form-group">
+              <label>Tipo</label>
+              <select v-model="editandoEscola.tipo" class="form-input">
+                <option value="ESCOLA_PUBLICA">Escola Pública</option>
+                <option value="ESCOLA_PRIVADA">Escola Privada</option>
+                <option value="UNIVERSIDADE">Universidade</option>
+                <option value="INSTITUTO">Instituto Federal</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Cidade</label>
+              <input v-model="editandoEscola.cidade" type="text" class="form-input" />
+            </div>
+            <div class="form-group">
+              <label>UF</label>
+              <select v-model="editandoEscola.uf" class="form-input">
+                <option value="">Selecione</option>
+                <option v-for="uf in ufs" :key="uf" :value="uf">{{ uf }}</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>E-mail de contato</label>
+              <input v-model="editandoEscola.emailContato" type="email" class="form-input" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button @click="salvarEdicaoEscola" class="btn-salvar">Salvar</button>
+            <button @click="modalEdicaoEscola = false" class="btn-cancelar">Cancelar</button>
+          </div>
         </div>
       </div>
 
@@ -513,10 +665,11 @@ export default {
         { key: 'pendentes', label: 'Pendentes' },
         { key: 'atividades', label: 'Atividades' },
         { key: 'alunos', label: 'Alunos' },
-        { key: 'professores', label: 'Professores' }
+        { key: 'professores', label: 'Professores' },
+        { key: 'escolas', label: 'Escolas' }
       ],
       atividade: { titulo: '', data: '', descricao: '', temLocalizacao: false, localizacao: '', foto: null, foto2: null, professorId: '' },
-      aluno: { nome: '', idade: '', uf: '', escola: '' },
+      aluno: { nome: '', idade: '', uf: '', escolaId: '' },
       professor: { email: '', cpf: '', senha: '', nome: '', idade: '', uf: '', escola: '', linkCurriculoLattes: '' },
       editando: { id: null, email: '', nome: '', idade: '', uf: '', escola: '', linkCurriculoLattes: '' },
       resetando: { id: null, nome: '', novaSenha: '' },
@@ -525,6 +678,11 @@ export default {
       confirmModal: { show: false, titulo: '', mensagem: '', variante: 'warning', labelOk: 'Confirmar', _resolve: null },
       toast: { show: false, mensagem: '', variante: 'sucesso' },
       ufs: ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'],
+      escolas: [],
+      escola: { nome: '', tipo: '', cidade: '', uf: '', emailContato: '' },
+      editandoEscola: { id: null, nome: '', tipo: '', cidade: '', uf: '', emailContato: '' },
+      modalEdicaoEscola: false,
+      mostrarFormEscola: false,
       alunos: [],
       professores: [],
       pendentes: [],
@@ -546,6 +704,17 @@ export default {
     this.carregarProfessores()
     this.carregarPendentes()
     this.carregarListaAtividades()
+    this.carregarEscolas()
+  },
+
+  watch: {
+    abaAtiva(nova) {
+      if (nova === 'pendentes') this.carregarPendentes()
+      else if (nova === 'atividades') this.carregarListaAtividades()
+      else if (nova === 'alunos') this.carregarAlunos()
+      else if (nova === 'professores') this.carregarProfessores()
+      else if (nova === 'escolas') this.carregarEscolas()
+    }
   },
 
   methods: {
@@ -626,13 +795,12 @@ export default {
         })
         if (!response.ok) throw new Error(await response.text())
 
-        this.sucessoAtividade = true
-        setTimeout(() => { this.sucessoAtividade = false }, 3000)
         this.atividade = { titulo: '', data: '', descricao: '', temLocalizacao: false, localizacao: '', foto: null, foto2: null, professorId: '' }
         this.mostrarFormAtividade = false
         await this.carregarListaAtividades()
+        this.mostrarToast('Atividade publicada com sucesso!')
       } catch (e) {
-        alert("Erro: " + e.message)
+        this.mostrarToast('Erro ao salvar atividade: ' + e.message, 'erro')
       }
     },
 
@@ -656,19 +824,20 @@ export default {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            ...this.aluno,
-            idade: parseInt(this.aluno.idade)
+            nome: this.aluno.nome,
+            idade: parseInt(this.aluno.idade),
+            uf: this.aluno.uf,
+            escolaId: this.aluno.escolaId || null
           })
         })
         if (!response.ok) throw new Error(await response.text())
 
-        this.sucessoAluno = true
-        setTimeout(() => { this.sucessoAluno = false }, 3000)
-        this.aluno = { nome: '', idade: '', uf: '', escola: '' }
+        this.aluno = { nome: '', idade: '', uf: '', escolaId: '' }
         this.mostrarFormAluno = false
         await this.carregarAlunos()
+        this.mostrarToast('Aluna cadastrada com sucesso!')
       } catch (e) {
-        alert("Erro: " + e.message)
+        this.mostrarToast('Erro: ' + e.message, 'erro')
       }
     },
 
@@ -835,6 +1004,89 @@ export default {
       }
     },
 
+    // ESCOLAS
+    async carregarEscolas() {
+      try {
+        const response = await fetch(`${API}/api/escolas`, {
+          headers: { "Authorization": `Bearer ${this.token()}` }
+        })
+        if (!response.ok) return
+        this.escolas = await response.json()
+      } catch (e) { console.error(e) }
+    },
+
+    async salvarEscola() {
+      try {
+        const response = await fetch(`${API}/api/escolas`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${this.token()}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify(this.escola)
+        })
+        if (!response.ok) throw new Error(await response.text())
+        this.escola = { nome: '', tipo: '', cidade: '', uf: '', emailContato: '' }
+        this.mostrarFormEscola = false
+        await this.carregarEscolas()
+        this.mostrarToast('Escola cadastrada com sucesso!')
+      } catch (e) { this.mostrarToast('Erro: ' + e.message, 'erro') }
+    },
+
+    abrirEditarEscola(e) {
+      this.editandoEscola = { ...e }
+      this.modalEdicaoEscola = true
+    },
+
+    async salvarEdicaoEscola() {
+      try {
+        const response = await fetch(`${API}/api/escolas/${this.editandoEscola.id}`, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${this.token()}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nome: this.editandoEscola.nome,
+            tipo: this.editandoEscola.tipo,
+            cidade: this.editandoEscola.cidade,
+            uf: this.editandoEscola.uf,
+            emailContato: this.editandoEscola.emailContato
+          })
+        })
+        if (!response.ok) throw new Error(await response.text())
+        this.modalEdicaoEscola = false
+        await this.carregarEscolas()
+        this.mostrarToast('Escola atualizada!')
+      } catch (e) { this.mostrarToast('Erro: ' + e.message, 'erro') }
+    },
+
+    async deletarEscola(id) {
+      const ok = await this.abrirConfirm({
+        titulo: 'Apagar escola?',
+        mensagem: 'Só é possível excluir escolas sem alunas vinculadas.',
+        variante: 'danger',
+        labelOk: 'Apagar'
+      })
+      if (!ok) return
+      try {
+        const response = await fetch(`${API}/api/escolas/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${this.token()}` }
+        })
+        if (!response.ok) {
+          const body = await response.json().catch(() => ({}))
+          throw new Error(body.message || 'Erro ao apagar')
+        }
+        this.escolas = this.escolas.filter(e => e.id !== id)
+        this.mostrarToast('Escola removida.')
+      } catch (e) { this.mostrarToast(e.message, 'erro') }
+    },
+
+    tipoLabel(tipo) {
+      const map = {
+        ESCOLA_PUBLICA: 'Escola Pública',
+        ESCOLA_PRIVADA: 'Escola Privada',
+        UNIVERSIDADE: 'Universidade',
+        INSTITUTO: 'Instituto Federal'
+      }
+      return map[tipo] || tipo
+    },
+
     logout() {
       localStorage.removeItem("logado")
       localStorage.removeItem("token")
@@ -862,42 +1114,53 @@ export default {
   flex-shrink: 0;
 }
 
-/* ── ABAS ────────────────────────────────────────────── */
-.abas {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1.25rem 1.5rem 0;
+/* ── NAV SIDEBAR ─────────────────────────────────────── */
+.nav-item {
   display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.btn-aba {
-  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.1rem;
-  border: 0.5px solid var(--oya-fog);
-  border-radius: var(--radius-pill);
-  background: #fff;
-  color: var(--oya-stone);
-  font-weight: 500;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: rgba(168, 213, 192, 0.65);
   font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  transition: background 0.2s, color 0.2s;
+  text-align: left;
   font-family: var(--font-body);
 }
 
-.btn-aba:hover {
-  border-color: rgba(217, 79, 30, 0.2);
-  color: var(--oya-ember);
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--oya-mint);
 }
 
-.btn-aba.ativo {
+.nav-item.ativo {
+  background: rgba(217, 79, 30, 0.18);
+  color: var(--oya-warm);
+}
+
+.nav-label {
+  flex: 1;
+}
+
+.nav-badge {
+  margin-left: auto;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.3rem;
   background: var(--oya-ember);
   color: #fff;
-  border-color: transparent;
-  box-shadow: 0 8px 22px rgba(217, 79, 30, 0.22);
+  border-radius: 99px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 /* ── SECAO CARD ──────────────────────────────────────── */
@@ -1495,8 +1758,7 @@ export default {
 }
 
 @media (max-width: 640px) {
-  .abas { padding-left: 1rem; padding-right: 1rem; }
-  .btn-aba, .btn-salvar { width: 100%; justify-content: center; }
+  .btn-salvar { width: 100%; justify-content: center; }
   .secao-card { padding: 1.1rem; }
   .pendente-card { flex-direction: column; align-items: flex-start; }
   .pendente-info { flex: unset; width: 100%; }

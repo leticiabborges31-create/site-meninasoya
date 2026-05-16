@@ -1,6 +1,6 @@
 <template>
   <div class="app-shell">
-    <header class="navbar">
+    <header v-if="mostrarNavbar" class="navbar">
       <router-link to="/" class="brand">
         <img src="@/assets/logo-oia.png" alt="Meninas Oyá" class="brand-logo" />
         <div class="brand-copy">
@@ -32,6 +32,11 @@ export default {
   },
 
   computed: {
+    mostrarNavbar() {
+      const rotasSemNavbar = ['/painel', '/painel-admin', '/admin', '/cadastro']
+      return !rotasSemNavbar.includes(this.$route.path)
+    },
+
     rotaAdministracao() {
       if (!this.logado) return '/admin'
       return this.isAdmin ? '/painel-admin' : '/painel'
