@@ -33,11 +33,12 @@
             <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
             <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
           </g>
-          <g v-if="aba.key === 'escolas'">
+          <g v-if="aba.key === 'instituicoes'">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
             <polyline points="9 22 9 12 15 12 15 22"/>
           </g>
         </svg>
+        
         <span class="nav-label">{{ aba.label }}</span>
         <span v-if="aba.key === 'pendentes' && pendentes.length > 0" class="nav-badge">{{ pendentes.length }}</span>
       </button>
@@ -269,9 +270,14 @@
                 <label>Nome</label>
                 <input v-model="aluno.nome" type="text" placeholder="Nome completo" class="form-input" />
               </div>
+              <!-- MUDANÇA 2: substituído "Idade" por "Período de Vigência" (intervalo de datas) -->
               <div class="form-group">
-                <label>Idade</label>
-                <input v-model="aluno.idade" type="number" placeholder="Idade" class="form-input" />
+                <label>Período de Vigência — Início</label>
+                <input v-model="aluno.dataInicio" type="date" class="form-input" />
+              </div>
+              <div class="form-group">
+                <label>Período de Vigência — Fim</label>
+                <input v-model="aluno.dataFim" type="date" class="form-input" />
               </div>
               <div class="form-group">
                 <label>UF</label>
@@ -281,10 +287,10 @@
                 </select>
               </div>
               <div class="form-group">
-                <label>Escola</label>
-                <select v-model="aluno.escolaId" class="form-input">
-                  <option value="">Selecione a escola</option>
-                  <option v-for="e in escolas" :key="e.id" :value="e.id">{{ e.nome }} ({{ e.uf }})</option>
+                <label>Instituição</label>
+                <select v-model="aluno.instituicaoId" class="form-input">
+                  <option value="">Selecione a instituição</option>
+                  <option v-for="e in instituicoes" :key="e.id" :value="e.id">{{ e.nome }} ({{ e.uf }})</option>
                 </select>
               </div>
             </div>
@@ -315,18 +321,20 @@
             <thead>
               <tr>
                 <th>Nome</th>
-                <th>Idade</th>
+                <!-- MUDANÇA 2: coluna "Idade" virou "Vigência" -->
+                <th>Vigência</th>
                 <th>UF</th>
-                <th>Escola</th>
+                <th>Instituição</th>
                 <th>Ações</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="a in alunos" :key="a.id">
                 <td>{{ a.nome }}</td>
-                <td>{{ a.idade }}</td>
+                <!-- MUDANÇA 2: exibe o intervalo formatado -->
+                <td>{{ formatarVigencia(a.dataInicio, a.dataFim) }}</td>
                 <td>{{ a.uf }}</td>
-                <td>{{ a.escola?.nome || '—' }}</td>
+                <td>{{ a.instituicao?.nome || '—' }}</td>
                 <td>
                   <button @click="deletarAluno(a.id)" class="btn-apagar" title="Apagar">
                     <svg class="icon-delete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -369,7 +377,7 @@
                 <th>Nome</th>
                 <th>CPF</th>
                 <th>UF</th>
-                <th>Escola</th>
+                <th>Instituição</th>
                 <th>Status</th>
                 <th>Ações</th>
               </tr>
@@ -409,70 +417,79 @@
       </div>
 
       <!-- ======= ABA ESCOLAS ======= -->
-      <div v-if="abaAtiva === 'escolas'">
+      <div v-if="abaAtiva === 'instituicoes'">
         <div class="secao-card">
           <div class="secao-header">
             <svg class="icon-secao" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
               <polyline points="9 22 9 12 15 12 15 22"/>
             </svg>
-            <h2 class="secao-titulo">Escolas e Universidades</h2>
-            <button @click="mostrarFormEscola = !mostrarFormEscola" class="btn-novo">
+            <!-- MUDANÇA 1: título da seção mantido como "Instituições participantes" -->
+            <h2 class="secao-titulo">Instituições participantes</h2>
+            <button @click="mostrarFormInstituicao = !mostrarFormInstituicao" class="btn-novo">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              {{ mostrarFormEscola ? 'Cancelar' : 'Nova Escola' }}
+              {{ mostrarFormInstituicao ? 'Cancelar' : 'Nova Instituição' }}
             </button>
           </div>
 
           <!-- FORMULÁRIO COLAPSÁVEL -->
-          <div v-if="mostrarFormEscola" class="form-bloco">
+          <div v-if="mostrarFormInstituicao" class="form-bloco">
             <div class="form-grid">
               <div class="form-group">
                 <label>Nome</label>
-                <input v-model="escola.nome" type="text" placeholder="Ex: UFMA" class="form-input" />
+                <input v-model="instituicao.nome" type="text" placeholder="Ex: UFMA" class="form-input" />
               </div>
+              <!-- MUDANÇA 3: select de tipo substituído por radio buttons Pública/Privada/Comunitária -->
               <div class="form-group">
                 <label>Tipo</label>
-                <select v-model="escola.tipo" class="form-input">
-                  <option value="">Selecione o tipo</option>
-                  <option value="ESCOLA_PUBLICA">Escola Pública</option>
-                  <option value="ESCOLA_PRIVADA">Escola Privada</option>
-                  <option value="UNIVERSIDADE">Universidade</option>
-                  <option value="INSTITUTO">Instituto Federal</option>
-                </select>
+                <div class="radio-group">
+                  <label class="radio-label">
+                    <input type="radio" v-model="instituicao.tipo" value="ESCOLA_PUBLICA" class="radio-input" />
+                    Pública
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" v-model="instituicao.tipo" value="ESCOLA_PRIVADA" class="radio-input" />
+                    Privada
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" v-model="instituicao.tipo" value="COMUNITARIA" class="radio-input" />
+                    Comunitária
+                  </label>
+                </div>
               </div>
               <div class="form-group">
                 <label>Cidade</label>
-                <input v-model="escola.cidade" type="text" placeholder="Ex: São Luís" class="form-input" />
+                <input v-model="instituicao.cidade" type="text" placeholder="Ex: São Luís" class="form-input" />
               </div>
               <div class="form-group">
                 <label>UF</label>
-                <select v-model="escola.uf" class="form-input">
+                <select v-model="instituicao.uf" class="form-input">
                   <option value="">Selecione</option>
                   <option v-for="uf in ufs" :key="uf" :value="uf">{{ uf }}</option>
                 </select>
               </div>
               <div class="form-group full">
                 <label>E-mail de contato (opcional)</label>
-                <input v-model="escola.emailContato" type="email" placeholder="contato@escola.edu.br" class="form-input" />
+                <input v-model="instituicao.emailContato" type="email" placeholder="contato@instituicao.edu.br" class="form-input" />
               </div>
             </div>
-            <button @click="salvarEscola" class="btn-salvar">
+            <button @click="salvarInstituicao" class="btn-salvar">
               <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"/>
                 <polyline points="17 6 12 13 7 8"/>
               </svg>
-              Cadastrar Escola
+              Cadastrar Instituição
             </button>
           </div>
 
           <!-- TABELA DE ESCOLAS -->
-          <div v-if="escolas.length === 0 && !mostrarFormEscola" class="vazio">
+          <div v-if="instituicoes.length === 0 && !mostrarFormInstituicao" class="vazio">
             <svg class="icon-vazio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
             </svg>
-            Nenhuma escola cadastrada.
+            Nenhuma instituição cadastrada.
           </div>
-          <table v-else-if="escolas.length > 0" class="tabela">
+          <table v-else-if="instituicoes.length > 0" class="tabela">
             <thead>
               <tr>
                 <th>Nome</th>
@@ -484,7 +501,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="e in escolas" :key="e.id">
+              <tr v-for="e in instituicoes" :key="e.id">
                 <td>{{ e.nome }}</td>
                 <td>{{ tipoLabel(e.tipo) }}</td>
                 <td>{{ e.cidade }}</td>
@@ -493,13 +510,13 @@
                   <span class="badge-count">{{ e.totalAlunos }}</span>
                 </td>
                 <td class="acoes">
-                  <button @click="abrirEditarEscola(e)" class="btn-acao btn-editar" title="Editar">
+                  <button @click="abrirEditarInstituicao(e)" class="btn-acao btn-editar" title="Editar">
                     <svg class="icon-delete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                       <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                     </svg>
                   </button>
-                  <button @click="deletarEscola(e.id)" class="btn-apagar" title="Apagar">
+                  <button @click="deletarInstituicao(e.id)" class="btn-apagar" title="Apagar">
                     <svg class="icon-delete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="3 6 5 6 21 6"/>
                       <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
@@ -513,45 +530,54 @@
       </div>
 
       <!-- MODAL EDITAR ESCOLA -->
-      <div v-if="modalEdicaoEscola" class="modal-overlay" @click.self="modalEdicaoEscola = false">
+      <div v-if="modalEdicaoInstituicao" class="modal-overlay" @click.self="modalEdicaoInstituicao = false">
         <div class="modal-card">
           <div class="modal-header">
-            <h3>Editar Escola</h3>
-            <button @click="modalEdicaoEscola = false" class="modal-fechar">&times;</button>
+            <h3>Editar Instituição</h3>
+            <button @click="modalEdicaoInstituicao = false" class="modal-fechar">&times;</button>
           </div>
           <div class="form-grid">
             <div class="form-group">
               <label>Nome</label>
-              <input v-model="editandoEscola.nome" type="text" class="form-input" />
+              <input v-model="editandoInstituicao.nome" type="text" class="form-input" />
             </div>
+            <!-- MUDANÇA 3: select de tipo no modal também virou radio buttons -->
             <div class="form-group">
               <label>Tipo</label>
-              <select v-model="editandoEscola.tipo" class="form-input">
-                <option value="ESCOLA_PUBLICA">Escola Pública</option>
-                <option value="ESCOLA_PRIVADA">Escola Privada</option>
-                <option value="UNIVERSIDADE">Universidade</option>
-                <option value="INSTITUTO">Instituto Federal</option>
-              </select>
+              <div class="radio-group">
+                <label class="radio-label">
+                  <input type="radio" v-model="editandoInstituicao.tipo" value="ESCOLA_PUBLICA" class="radio-input" />
+                  Pública
+                </label>
+                <label class="radio-label">
+                  <input type="radio" v-model="editandoInstituicao.tipo" value="ESCOLA_PRIVADA" class="radio-input" />
+                  Privada
+                </label>
+                <label class="radio-label">
+                  <input type="radio" v-model="editandoInstituicao.tipo" value="COMUNITARIA" class="radio-input" />
+                  Comunitária
+                </label>
+              </div>
             </div>
             <div class="form-group">
               <label>Cidade</label>
-              <input v-model="editandoEscola.cidade" type="text" class="form-input" />
+              <input v-model="editandoInstituicao.cidade" type="text" class="form-input" />
             </div>
             <div class="form-group">
               <label>UF</label>
-              <select v-model="editandoEscola.uf" class="form-input">
+              <select v-model="editandoInstituicao.uf" class="form-input">
                 <option value="">Selecione</option>
                 <option v-for="uf in ufs" :key="uf" :value="uf">{{ uf }}</option>
               </select>
             </div>
             <div class="form-group full">
               <label>E-mail de contato</label>
-              <input v-model="editandoEscola.emailContato" type="email" class="form-input" />
+              <input v-model="editandoInstituicao.emailContato" type="email" class="form-input" />
             </div>
           </div>
           <div class="modal-footer">
-            <button @click="salvarEdicaoEscola" class="btn-salvar">Salvar</button>
-            <button @click="modalEdicaoEscola = false" class="btn-cancelar">Cancelar</button>
+            <button @click="salvarEdicaoInstituicao" class="btn-salvar">Salvar</button>
+            <button @click="modalEdicaoInstituicao = false" class="btn-cancelar">Cancelar</button>
           </div>
         </div>
       </div>
@@ -584,7 +610,7 @@
               </select>
             </div>
             <div class="form-group full">
-              <label>Escola</label>
+              <label>Instituição</label>
               <input v-model="editando.escola" type="text" class="form-input" />
             </div>
             <div class="form-group full">
@@ -644,10 +670,6 @@
         </div>
       </transition>
  
-      
- 
- 
- 
   </PainelShell>
 </template>
 
@@ -666,10 +688,12 @@ export default {
         { key: 'atividades', label: 'Atividades' },
         { key: 'alunos', label: 'Alunos' },
         { key: 'professores', label: 'Professores' },
-        { key: 'escolas', label: 'Escolas' }
+        
+        { key: 'instituicoes', label: 'Instituições' }
       ],
       atividade: { titulo: '', data: '', descricao: '', temLocalizacao: false, localizacao: '', foto: null, foto2: null, professorId: '' },
-      aluno: { nome: '', idade: '', uf: '', escolaId: '' },
+      // MUDANÇA 2: "idade" substituído por "dataInicio" e "dataFim"
+      aluno: { nome: '', dataInicio: '', dataFim: '', uf: '', instituicaoId: '' },
       professor: { email: '', cpf: '', senha: '', nome: '', idade: '', uf: '', escola: '', linkCurriculoLattes: '' },
       editando: { id: null, email: '', nome: '', idade: '', uf: '', escola: '', linkCurriculoLattes: '' },
       resetando: { id: null, nome: '', novaSenha: '' },
@@ -678,11 +702,11 @@ export default {
       confirmModal: { show: false, titulo: '', mensagem: '', variante: 'warning', labelOk: 'Confirmar', _resolve: null },
       toast: { show: false, mensagem: '', variante: 'sucesso' },
       ufs: ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'],
-      escolas: [],
-      escola: { nome: '', tipo: '', cidade: '', uf: '', emailContato: '' },
-      editandoEscola: { id: null, nome: '', tipo: '', cidade: '', uf: '', emailContato: '' },
-      modalEdicaoEscola: false,
-      mostrarFormEscola: false,
+      instituicoes: [],
+      instituicao: { nome: '', tipo: '', cidade: '', uf: '', emailContato: '' },
+      editandoInstituicao: { id: null, nome: '', tipo: '', cidade: '', uf: '', emailContato: '' },
+      modalEdicaoInstituicao: false,
+      mostrarFormInstituicao: false,
       alunos: [],
       professores: [],
       pendentes: [],
@@ -704,7 +728,7 @@ export default {
     this.carregarProfessores()
     this.carregarPendentes()
     this.carregarListaAtividades()
-    this.carregarEscolas()
+    this.carregarInstituicoes()
   },
 
   watch: {
@@ -713,7 +737,7 @@ export default {
       else if (nova === 'atividades') this.carregarListaAtividades()
       else if (nova === 'alunos') this.carregarAlunos()
       else if (nova === 'professores') this.carregarProfessores()
-      else if (nova === 'escolas') this.carregarEscolas()
+      else if (nova === 'instituicoes') this.carregarInstituicoes()
     }
   },
 
@@ -761,6 +785,17 @@ export default {
       if (!data) return ''
       const [ano, mes, dia] = data.split('-')
       return `${dia}/${mes}/${ano}`
+    },
+
+    // MUDANÇA 2: método para formatar o intervalo de vigência
+    formatarVigencia(inicio, fim) {
+      if (!inicio && !fim) return '—'
+      const fmt = d => {
+        if (!d) return '?'
+        const [a, m, dia] = d.split('-')
+        return `${dia}/${m}/${a}`
+      }
+      return `${fmt(inicio)} → ${fmt(fim)}`
     },
 
     async deletarAtividade(id) {
@@ -823,16 +858,18 @@ export default {
             "Authorization": `Bearer ${this.token()}`,
             "Content-Type": "application/json"
           },
+          // MUDANÇA 2: envia dataInicio e dataFim em vez de idade
           body: JSON.stringify({
             nome: this.aluno.nome,
-            idade: parseInt(this.aluno.idade),
+            dataInicio: this.aluno.dataInicio,
+            dataFim: this.aluno.dataFim,
             uf: this.aluno.uf,
-            escolaId: this.aluno.escolaId || null
+            instituicaoId: this.aluno.instituicaoId || null
           })
         })
         if (!response.ok) throw new Error(await response.text())
 
-        this.aluno = { nome: '', idade: '', uf: '', escolaId: '' }
+        this.aluno = { nome: '', dataInicio: '', dataFim: '', uf: '', instituicaoId: '' }
         this.mostrarFormAluno = false
         await this.carregarAlunos()
         this.mostrarToast('Aluna cadastrada com sucesso!')
@@ -1005,66 +1042,66 @@ export default {
     },
 
     // ESCOLAS
-    async carregarEscolas() {
+    async carregarInstituicoes() {
       try {
-        const response = await fetch(`${API}/api/escolas`, {
+        const response = await fetch(`${API}/api/instituicoes`, {
           headers: { "Authorization": `Bearer ${this.token()}` }
         })
         if (!response.ok) return
-        this.escolas = await response.json()
+        this.instituicoes = await response.json()
       } catch (e) { console.error(e) }
     },
 
-    async salvarEscola() {
+    async salvarInstituicao() {
       try {
-        const response = await fetch(`${API}/api/escolas`, {
+        const response = await fetch(`${API}/api/instituicoes`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${this.token()}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify(this.escola)
+          body: JSON.stringify(this.instituicao)
         })
         if (!response.ok) throw new Error(await response.text())
-        this.escola = { nome: '', tipo: '', cidade: '', uf: '', emailContato: '' }
-        this.mostrarFormEscola = false
-        await this.carregarEscolas()
-        this.mostrarToast('Escola cadastrada com sucesso!')
+        this.instituicao = { nome: '', tipo: '', cidade: '', uf: '', emailContato: '' }
+        this.mostrarFormInstituicao = false
+        await this.carregarInstituicoes()
+        this.mostrarToast('Instituição cadastrada com sucesso!')
       } catch (e) { this.mostrarToast('Erro: ' + e.message, 'erro') }
     },
 
-    abrirEditarEscola(e) {
-      this.editandoEscola = { ...e }
-      this.modalEdicaoEscola = true
+    abrirEditarInstituicao(e) {
+      this.editandoInstituicao = { ...e }
+      this.modalEdicaoInstituicao = true
     },
 
-    async salvarEdicaoEscola() {
+    async salvarEdicaoInstituicao() {
       try {
-        const response = await fetch(`${API}/api/escolas/${this.editandoEscola.id}`, {
+        const response = await fetch(`${API}/api/instituicoes/${this.editandoInstituicao.id}`, {
           method: 'PUT',
           headers: { 'Authorization': `Bearer ${this.token()}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            nome: this.editandoEscola.nome,
-            tipo: this.editandoEscola.tipo,
-            cidade: this.editandoEscola.cidade,
-            uf: this.editandoEscola.uf,
-            emailContato: this.editandoEscola.emailContato
+            nome: this.editandoInstituicao.nome,
+            tipo: this.editandoInstituicao.tipo,
+            cidade: this.editandoInstituicao.cidade,
+            uf: this.editandoInstituicao.uf,
+            emailContato: this.editandoInstituicao.emailContato
           })
         })
         if (!response.ok) throw new Error(await response.text())
-        this.modalEdicaoEscola = false
-        await this.carregarEscolas()
-        this.mostrarToast('Escola atualizada!')
+        this.modalEdicaoInstituicao = false
+        await this.carregarInstituicoes()
+        this.mostrarToast('Instituição atualizada!')
       } catch (e) { this.mostrarToast('Erro: ' + e.message, 'erro') }
     },
 
-    async deletarEscola(id) {
+    async deletarInstituicao(id) {
       const ok = await this.abrirConfirm({
-        titulo: 'Apagar escola?',
-        mensagem: 'Só é possível excluir escolas sem alunas vinculadas.',
+        titulo: 'Apagar instituição?',
+        mensagem: 'Só é possível excluir instituições sem alunas vinculadas.',
         variante: 'danger',
         labelOk: 'Apagar'
       })
       if (!ok) return
       try {
-        const response = await fetch(`${API}/api/escolas/${id}`, {
+        const response = await fetch(`${API}/api/instituicoes/${id}`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${this.token()}` }
         })
@@ -1072,15 +1109,17 @@ export default {
           const body = await response.json().catch(() => ({}))
           throw new Error(body.message || 'Erro ao apagar')
         }
-        this.escolas = this.escolas.filter(e => e.id !== id)
-        this.mostrarToast('Escola removida.')
+        this.instituicoes = this.instituicoes.filter(e => e.id !== id)
+        this.mostrarToast('Instituição removida.')
       } catch (e) { this.mostrarToast(e.message, 'erro') }
     },
 
     tipoLabel(tipo) {
+      // MUDANÇA 3: mapeamento atualizado para incluir Comunitária
       const map = {
-        ESCOLA_PUBLICA: 'Escola Pública',
-        ESCOLA_PRIVADA: 'Escola Privada',
+        ESCOLA_PUBLICA: 'Pública',
+        ESCOLA_PRIVADA: 'Privada',
+        COMUNITARIA: 'Comunitária',
         UNIVERSIDADE: 'Universidade',
         INSTITUTO: 'Instituto Federal'
       }
@@ -1346,6 +1385,34 @@ export default {
   color: var(--oya-sage);
   font-weight: 500;
   font-size: 0.875rem;
+}
+
+/* ── RADIO GROUP (MUDANÇA 3) ─────────────────────────── */
+.radio-group {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid var(--oya-fog);
+  border-radius: var(--radius-md);
+  background: #FAFAF8;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  color: var(--oya-char);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.radio-input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--oya-ember);
+  cursor: pointer;
 }
 
 /* ── TABELA ──────────────────────────────────────────── */

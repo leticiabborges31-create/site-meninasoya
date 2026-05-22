@@ -5,7 +5,7 @@
         <img src="@/assets/logo-oia.png" alt="Meninas Oyá" class="brand-logo" />
         <div class="brand-copy">
           <strong>Meninas Oya</strong>
-          <span>Rede de apoio e protagonismo</span>
+          <span>Rede de Apoio e Empoderamento</span>
         </div>
       </router-link>
 

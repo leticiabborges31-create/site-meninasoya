@@ -5,7 +5,7 @@
     <section class="hero">
       <div class="hero-inner">
         <div class="hero-texto">
-          <span class="hero-tag">Rede de apoio e protagonismo</span>
+          <span class="hero-tag">Rede de Apoio e Empoderamento</span>
           <h1 class="hero-titulo">
             Inspire,<br />
             <em>Empodere</em><br />
@@ -147,7 +147,7 @@
               <span class="estado-icon">{{ estadosAbertos[est.chave] ? '−' : '+' }}</span>
             </button>
             <div class="estado-corpo" v-show="estadosAbertos[est.chave]">
-              <p class="estado-uni">{{ est.universidades }}</p>
+        
               <p class="estado-coord">{{ est.coordenadora }}</p>
             </div>
           </div>
@@ -186,7 +186,7 @@
           <img src="@/assets/logo-oia.png" alt="Meninas Oyá" class="rodape-logo" />
           <div>
             <strong>Meninas Oyá</strong>
-            <span>Rede de apoio e protagonismo</span>
+            <span>Rede de apoio e empoderamento </span>
           </div>
         </div>
         <div class="rodape-info">
@@ -218,10 +218,10 @@ export default {
         sudeste: false
       },
       estados: [
-        { chave: 'maranhao', nome: 'Maranhão', universidades: 'UFMA / IFMA', coordenadora: 'Coord. Regina Célia de Sousa' },
-        { chave: 'bahia', nome: 'Bahia', universidades: 'IFBA / UFBA', coordenadora: 'Coord. Isabelle Priscila Carneiro de Lima' },
-        { chave: 'sul', nome: 'Sul', universidades: 'UFSM / UFRGS', coordenadora: 'Coord. Inés Prieto Schmidt Sauerwein' },
-        { chave: 'sudeste', nome: 'Sudeste', universidades: 'UFABC / UNILINS', coordenadora: 'Coord. Graciella Watanabe' }
+        { chave: 'maranhao', nome: 'Maranhão', coordenadora: 'Coord. Regina Célia de Sousa' },
+        { chave: 'bahia', nome: 'Bahia',  coordenadora: 'Coord. Isabelle Priscila Carneiro de Lima' },
+        { chave: 'são Paulo', nome: 'São paulo', coordenadora: 'Coord. Inés Prieto Schmidt Sauerwein' },
+        { chave: 'rio grande do sul', nome: 'Rio Grande do Sul', coordenadora: 'Coord. Graciella Watanabe' }
       ]
     };
   },
